@@ -16,12 +16,13 @@
 
 			var params = req.query;
 			var url = 'http://m.shukugang.com/stock/search';
-
+			console.log('hello api/stocks/search');
 			httpRequest.request(url, params)
 				.then(function(data){
 					var jsonData = JSON.parse(data);
 					res.status(200).send(jsonData);
 				}, function(error){
+					console.log(error);
 					res.status(400).send(error);
 				});
 		}).listen(app.get('port'), function() {
