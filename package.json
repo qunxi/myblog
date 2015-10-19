@@ -9,6 +9,7 @@
   "dependencies": {
     "ejs": "2.3.3",
     "body-parser": "^1.14.0",
+    "bcrypt-nodejs": "^0.0.3",
     "crypto": "0.0.3",
     "express": "^4.13.3",
     "jwt-simple": "^0.3.1",
