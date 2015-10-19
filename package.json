@@ -16,10 +16,11 @@
     "lodash": "^3.10.1",
     "mongoose": "^4.1.7",
     "passport": "^0.3.0",
+    "feedme": "^0.3.0",
     "passport-local": "^1.0.0"  
   },
   "devDependencies": {
-    "feedme": "^0.3.0",
+   
     "nodemon": "^1.6.1",
     "q": "^1.4.1"
   },
