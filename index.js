@@ -53,6 +53,6 @@ var server = http.createServer(app);
 //var test = new Test();
 
 
-server.listen(5000 || process.env.PORT, function () { 
+server.listen(process.env.PORT || 5000, function () { 
     console.log("it is listening the port: " + server.address().port);
 });
