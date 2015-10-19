@@ -78,7 +78,7 @@
 		var feedCatelog = {
 				title: data.title,
 				subtitle: !!data.subtitle ? data.subtitle : '',
-				author: data.author,
+				author: data.author.name,
 				website: !!mainUrl ? mainUrl.href : '',
 				rsslink: url,
 				updated: data.updated

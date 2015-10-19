@@ -3,6 +3,7 @@
 	var Q = require('q');
 	var FeedCatelog = require('../models/feedCatelog.js');
 	var Feed = require('../models/feeds.js');
+	var User = require('../models/user.js');
 	var FeedUserRelation = require('../models/feedUserRelation.js');
 
 	feedsPersistenceSrv.saveFeedsResource = function(data){
@@ -33,9 +34,19 @@
 	};
 
 	feedsPersistenceSrv.updatedFeedCatelogList = function(userid, catelog){
+		User.findUserById(userid)
+			.then(function(user){
+				if(!!user){
+					updateUserCatelogList(userid, catelog._id);
+				}
+			}, function(error){
+				return error;
+			});
+	};
+	function updateUserCatelogList(userid, catelogid){
 		var feedUserRelation = new FeedUserRelation({
 			userId: userid,
-			catelogId: catelog._id
+			catelogId: catelogid
 		});	
 
 		FeedUserRelation.findOne({userId: userid, catelogId: catelog._id})
@@ -54,7 +65,7 @@
 				console.log('feed user relation find failed');
 				return error;
 			});
-	};
+	}
 
 
 

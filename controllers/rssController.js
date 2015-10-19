@@ -14,13 +14,14 @@
 								   .then(function(data){
 			  							feedsPersistence.saveFeedsResource(data)
 			  								.then(function(catelog){
-			  									console.log('api/rss', catelog);
+			  									
 			  									return feedsPersistence.updatedFeedCatelogList(userId, catelog);
 			  								}, function(error){
 			  									console.log('api/rss', error);
 			  									return error;
 			  								});
 			  						}, function(err){
+			  							console.log(err);
 			  							return err;
 			  						})
 			  					   .then(function(){

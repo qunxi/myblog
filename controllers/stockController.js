@@ -16,7 +16,7 @@
 
 			var params = req.query;
 			var url = 'http://m.shukugang.com/stock/search';
-			console.log('hello api/stocks/search');
+
 			httpRequest.request(url, params)
 				.then(function(data){
 					var jsonData = JSON.parse(data);
