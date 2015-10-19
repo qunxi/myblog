@@ -25,8 +25,6 @@
 					console.log(error);
 					res.status(400).send(error);
 				});
-		}).listen(app.get('port'), function() {
-    		console.log('App is running, server is listening on port ', app.get('port'));
 		});
 
 

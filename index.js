@@ -21,10 +21,6 @@ app.use(function(req, res, next){
 //setup the controller
 controllers.init(app);
 
-app.get('/', function(req, res){
-	res.send("hello world!!!");
-});
-
 //connect to mongodb
 var mongodbConnection = 'mongodb://ds041164.mongolab.com:41164/heroku_dpdvxrnp';
 mongoose.connect(mongodbConnection, function (err) { 
