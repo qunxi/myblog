@@ -27,6 +27,7 @@ var dbConnectionString = process.env.MONGOLAB_URI ||
   						 'mongodb://localhost/test';
 
 mongoose.connect(dbConnectionString, function (err) { 
+	console.log(dbConnectionString);
     if (err)
         console.log('MongoDB: connection error ->' + err);
     else
