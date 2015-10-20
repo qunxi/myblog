@@ -22,8 +22,11 @@ app.use(function(req, res, next){
 controllers.init(app);
 
 //connect to mongodb
-var mongodbConnection = 'mongodb://ds041164.mongolab.com:41164/heroku_dpdvxrnp';
-mongoose.connect(mongodbConnection, function (err) { 
+var dbConnectionString = process.env.MONGOLAB_URI || 
+  						 process.env.MONGOHQ_URL || 
+  						 'mongodb://localhost/test';
+
+mongoose.connect(dbConnectionString, function (err) { 
     if (err)
         console.log('MongoDB: connection error ->' + err);
     else
