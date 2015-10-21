@@ -25,7 +25,6 @@ controllers.init(app);
 var dbConnectionString = process.env.MONGOLAB_URI ||
     process.env.MONGOHQ_URL ||
     'mongodb://localhost/test';
-
 mongoose.connect(dbConnectionString, function(err) {
     console.log(dbConnectionString);
     if (err)
@@ -37,6 +36,6 @@ mongoose.connect(dbConnectionString, function(err) {
 //create server
 var server = http.createServer(app);
 
-server.listen(process.env.PORT || 5000, function() {
+server.listen(process.env.PORT || 3000, function() {
     console.log("it is listening the port: " + server.address().port);
 });

@@ -1,11 +1,11 @@
-(function(FeedCatelog){
-	'use strict';
+(function(FeedCatelog) {
+    'use strict';
 
-	var mongoose = require('mongoose');
+    var mongoose = require('mongoose');
 
-	var model = 'FeedCatelog';
+    var model = 'FeedCatelog';
 
-	var FeedCatelogSchema = new mongoose.Schema({
+    var FeedCatelogSchema = new mongoose.Schema({
         website: String, //mainpage
         link: String, //self
         title: String,
@@ -16,14 +16,16 @@
         tags: String
     });
 
-	FeedCatelogSchema.statics.findFeedCatelogByUrl = function(feed){
-		return this.findOne({link: feed.link});
-	};
+    FeedCatelogSchema.statics.findFeedCatelogByUrl = function(rsslink) {
+        return this.findOne({
+            link: rsslink
+        });
+    };
 
-	FeedCatelogSchema.statics.findCatelogsByUserIds = function(catelogIds){
-		return this.find(catelogIds);
-	};
+    FeedCatelogSchema.statics.findCatelogsByUserIds = function(catelogIds) {
+        return this.find(catelogIds);
+    };
 
-	module.exports = mongoose.model(model, FeedCatelogSchema);
+    module.exports = mongoose.model(model, FeedCatelogSchema);
 
 })(module.exports);

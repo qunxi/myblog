@@ -1,6 +1,6 @@
-﻿(function (User) {
+﻿(function(User) {
     'use strict';
-     
+
     var bcrypt = require('bcrypt-nodejs');
     var mongoose = require('mongoose');
 
@@ -9,31 +9,33 @@
         username: String,
         password: String
     });
-    
-    UserSchema.methods.toJSON = function () {
+
+    UserSchema.methods.toJSON = function() {
         var user = this.toObject();
         delete user.password;
         return user;
     };
-    
-    UserSchema.methods.comparePasswords = function (password, callback) {
+
+    UserSchema.methods.comparePasswords = function(password, callback) {
         bcrypt.compare(password, this.password, callback);
     };
-    UserSchema.statics.findUserById = function(id){
-        return this.findOne({_id: id});
+    UserSchema.statics.findUserById = function(id) {
+        return this.findOne({
+            _id: id
+        });
     };
-    
-    UserSchema.pre('save', function (next) {
+
+    UserSchema.pre('save', function(next) {
         var user = this;
         if (!user.isModified('password')) {
             console.log('Is not modifed');
             return next();
         }
 
-        bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.genSalt(10, function(err, salt) {
             if (err) return next(err);
-            
-            bcrypt.hash(user.password, salt, null, function (err, hash) {
+
+            bcrypt.hash(user.password, salt, null, function(err, hash) {
                 if (err) return next(err);
                 user.password = hash;
                 next();

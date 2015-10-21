@@ -31,7 +31,7 @@
             User.findOne(searchUser, function(err, user) {
                 if (err) throw err;
                 if (user) {
-                    
+
                     return res.status(406).send({
                         message: "the user has exist"
                     });
@@ -55,7 +55,7 @@
         app.post('/api/login', function(req, res) {
             var reqUser = req.body;
 
-             var searchUser = {
+            var searchUser = {
                 $or: [{
                     username: reqUser.username
                 }, {

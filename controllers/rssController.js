@@ -1,87 +1,95 @@
-(function(rssController){
+(function(rssController) {
 
-	'use strict';
-	 
-	 rssController.init = function(app) {
+    'use strict';
 
-	 	var feedsRequest = require('../services/feedsRequestSrv.js');
-	 	var feedsPersistence = require('../services/feedsPersistenceSrv.js');
+    rssController.init = function(app) {
 
-	  	app.post('/api/rss', function(req, res){
-	  			var rssParams = req.body;
-	  			var userId = rssParams.userId;
-	  			feedsRequest.requestFeedsResource(rssParams.link)
-								   .then(function(data){
-			  							feedsPersistence.saveFeedsResource(data)
-			  								.then(function(catelog){
-			  									
-			  									return feedsPersistence.updatedFeedCatelogList(userId, catelog);
-			  								}, function(error){
-			  									console.log('api/rss', error);
-			  									return error;
-			  								});
-			  						}, function(err){
-			  							console.log(err);
-			  							return err;
-			  						})
-			  					   .then(function(){
-			  					   		successCallback(res);
-			  					   	}, 
-			  					   	function(err){failedCallback(res, err);
-			  					   	});
+        var feedsRequest = require('../services/feedsRequestSrv.js');
+        var feedsPersistence = require('../services/feedsPersistenceSrv.js');
 
-	  		});
+        app.post('/api/rss', function(req, res) {
+            var rssParams = req.body;
+            var userId = rssParams.userId;
+            feedsRequest.requestFeedsResource(rssParams.link)
+                .then(function(data) {
+                    return feedsPersistence.saveFeedsResource(data)
+                        .then(function(catelog) {
+                            if (!!userId) {
+                                return feedsPersistence.updatedFeedCatelogList(userId, catelog);
+                            }
+                            return catelog;
+                        }, function(error) {
+                            console.log('api/rss', error);
+                            return error;
+                        });
 
-		app.get('/api/rss/catelog', function(req, res){
-			var userId = req.body.userId;
-			console.log(userId);
-			if(!!userId){
-				feedsRequest.requestFeedCatelogs(userId)
-					.then(function(data){
-						successCallback(res, data);
-					}, function(err){
-						console.log(err);
-						failedCallback(res, err);
-					});
-				return;	
-			}
+                }, function(err) {
+                    console.log(err);
+                    return err;
+                })
+                .then(function(data) {
+                        console.log(data);
+                        successCallback(res, data);
+                    },
+                    function(err) {
+                        failedCallback(res, err);
+                    });
 
-			return res.status(203).send({
-	  				error: 'you don\'t have authorization, please login'
+        });
+
+        app.get('/api/rss/catelog', function(req, res) {
+        	//get must use query to get param
+            var userId = req.query.userId;
+            console.log(userId);
+            if (!!userId) {
+                feedsRequest.requestFeedCatelogs(userId)
+                    .then(function(data) {
+                        successCallback(res, data);
+                    }, function(err) {
+                        console.log(err);
+                        failedCallback(res, err);
+                    });
+                return;
+            }
+
+            return res.status(203).send({
+                error: 'you don\'t have authorization, please login'
             });
-		});
+        });
 
 
-		app.get('/api/rss/feeds', function(req, res){
-			var catelogId = req.body.catelogId;
+        app.get('/api/rss/feeds', function(req, res) {
+            var catelogId = req.query.catelogId;
+            console.log(catelogId);
+            if (!!catelogId) {
+                feedsRequest.requestFeedsByCatelogId(catelogId)
+                    .then(function(data) {
+                            successCallback(res, data);
+                        },
+                        function(err) {
+                            console.log(err);
+                            failedCallback(res, err);
+                        });
+                return;
+            }
 
-			if(!!catelogId){
-				feedsRequest.requestFeedsByCatelogId(catelogId)
-						.then(function(data){
-							successCallback(res, data);
-						}, 
-						function(err){
-							console.log(err);
-							failedCallback(res, err);
-						});
-				return;
-			}
+            return failedCallback(res, {
+                error: 'please specific the catelogs'
+            });
 
-			return failedCallback(res, {error: 'please specific the catelogs'});
+        });
 
-		});
+        //private
+        function failedCallback(res, error) {
+            return res.status(400).send({
+                error: error.message
+            });
+        }
 
-		//private
-	  	function failedCallback(res, error){
-	  		return res.status(400).send({
-	  				error: error.message
-                });
-	  	}
+        function successCallback(res, data) {
+            return res.status(200).send(data);
+        }
 
-	  	function successCallback(res, data){
-	  		return res.status(200).send(data);
-	  	}
-
-	  };
+    };
 
 })(module.exports);
