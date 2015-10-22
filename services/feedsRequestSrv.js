@@ -83,7 +83,7 @@
             rsslink: url,
             updated: data.updated
         };
-
+        
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
                 return {
@@ -91,7 +91,7 @@
                     link: item.link.href,
                     updated: item.updated,
                     author: item.author,
-                    content: ''
+                    content: item.content || item['content:encoded']
                 };
             })
             .value();
@@ -111,7 +111,7 @@
             rsslink: url,
             updated: data.lastBuildDate
         };
-
+       
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
             	console.log(item.link);
@@ -120,7 +120,7 @@
                     link: item.link,
                     updated: item.pubdate,
                     author: '',
-                    content: ''
+                    content: item.content || item['content:encoded']
                 };
             })
             .value();
