@@ -4,90 +4,172 @@
 
     rssController.init = function(app) {
 
-        var feedsRequest = require('../services/feedsRequestSrv.js');
-        var feedsPersistence = require('../services/feedsPersistenceSrv.js');
+        var rssRequest = require('../services/rssRequestSrv.js');
+        var rssPersistence = require('../services/rssPersistenceSrv.js');
+        var authenticate = require('../services/authenticateSrv.js');
+        var utils = require('../services/utilsSrv.js');
+        var SECRET_KEY = app.get('SECRET_KEY');
 
         app.post('/api/rss', function(req, res) {
             var rssParams = req.body;
-            var userId = rssParams.userId;
-            feedsRequest.requestFeedsResource(rssParams.link)
-                .then(function(data) {
-                    return feedsPersistence.saveFeedsResource(data)
-                        .then(function(catelog) {
-                            if (!!userId) {
-                                return feedsPersistence.updatedFeedCatelogList(userId, catelog);
-                            }
-                            return catelog;
-                        }, function(error) {
-                            console.log('api/rss', error);
-                            return error;
-                        });
 
-                }, function(err) {
-                    console.log(err);
-                    return err;
-                })
-                .then(function(data) {
-                        console.log(data);
-                        successCallback(res, data);
-                    },
-                    function(err) {
-                        failedCallback(res, err);
-                    });
+            var token = rssParams.token;
+            var link = rssParams.link;
+          
+            if(!link){
+                return failedResponse(res, {error: new Error('the link is not valid')});
+            }
 
+            rssRequest.requestRssResourceFrmNet(link)
+                      .then(function(data){
+                         
+                          if(utils.isErrorObject(data)){
+                            return  failedResponse(res, data);
+                          }
+
+                          if(!data.items){
+                            return failedResponse(res, {
+                                error: 'dont have any catelog'
+                            });
+                          }
+
+                          rssPersistence.saveRssResource(data.catelog, data.items)
+                                        .then(function(data){
+                                            if(utils.isErrorObject(data)){
+                                                return  failedResponse(res, data);
+                                            }
+                                            //update catelog and user relations
+                                            var catelog = data;
+                                            if(!!token){
+                                               return  authenticate.verification(token, SECRET_KEY)
+                                                        .then(function(user){
+                                                                if(utils.isErrorObject(user)){
+                                                                    return  authenticateFailed(res, user);
+                                                                }
+                                                               
+                                                                return rssPersistence.updateUserCatelogList(user._id, catelog._id)
+                                                                          .then(function(data){
+                                                                                //console.log(data);
+                                                                                if(utils.isErrorObject(data)){
+                                                                                    return  failedResponse(res, data);
+                                                                                }
+                                                                                return successResponse(res, catelog);
+                                                                });
+                                                        });
+                                            }
+                                            else{
+                                                return successResponse(res, catelog);
+                                            }
+                                        });
+                      });
         });
 
         app.get('/api/rss/catelog', function(req, res) {
         	//get must use query to get param
-            var userId = req.query.userId;
-            console.log(userId);
-            if (!!userId) {
-                feedsRequest.requestFeedCatelogs(userId)
-                    .then(function(data) {
-                        successCallback(res, data);
-                    }, function(err) {
-                        console.log(err);
-                        failedCallback(res, err);
-                    });
-                return;
+            var token = req.query.token;
+            
+            if (!!token) {
+               authenticate.verification(token, SECRET_KEY)
+                           .then(function(user){
+                                if(utils.isErrorObject(user)){
+                                    return  authenticateFailed(res, user);
+                                }
+                                return rssRequest.requestRssCatelogsByUserId(user._id)
+                                                .then(function(catelogs) {
+                                                    if(utils.isErrorObject(catelogs)){
+                                                        return failedResponse(res, catelogs);
+                                                    }
+                                                    return successResponse(res, catelogs);
+                                                });
+                            });
             }
-
-            return res.status(203).send({
-                error: 'you don\'t have authorization, please login'
-            });
         });
 
 
-        app.get('/api/rss/feeds', function(req, res) {
+        app.get('/api/rss/itemContent', function(req, res){
+            var id = req.query.itemId;
+            
+            if(!!id){
+                return rssRequest.requestRssItemContentByItemId(id)
+                            .then(function(content){
+                                if(utils.isErrorObject(content)){
+                                    return failedResponse(res, content);
+                                }
+
+                                return successResponse(res, content);
+                            });
+            }
+
+            return failedResponse(res, {
+                error: 'you not specific the item id'
+            });
+
+        });
+
+        app.post('/api/rss/removeCatelogs', function(req, res){
+            var token = req.body.token;
+            var catelogIds = req.body.catelogIds;
+           
+            if(!!token && !!catelogIds){
+                return authenticate.verification(token, SECRET_KEY)
+                            .then(function(user){
+                                if(utils.isErrorObject(user)){
+                                    return authenticateFailed(res, user);
+                                }
+
+                                return rssPersistence.removeSelectedRssUserMap(user._id, catelogIds)
+                                                    .then(function(data){
+                                                        if(utils.isErrorObject(data)){
+                                                            failedResponse(res, data);
+                                                        }
+                                                        
+                                                        return successResponse(res, data);
+                                                    });
+                            });
+            }
+
+            return failedResponse(res, {
+                error: 'you didn\'t reomve catelog success'
+            });
+
+        });
+
+        app.get('/api/rss/items', function(req, res) {
             var catelogId = req.query.catelogId;
             console.log(catelogId);
             if (!!catelogId) {
-                feedsRequest.requestFeedsByCatelogId(catelogId)
-                    .then(function(data) {
-                            successCallback(res, data);
-                        },
-                        function(err) {
-                            console.log(err);
-                            failedCallback(res, err);
+                return rssRequest.requestRssItemsByCatelogId(catelogId)
+                          .then(function(items) {
+
+                            if (utils.isErrorObject(items)) {
+                                return failedResponse(res, items);
+                            }
+                            return successResponse(res, items);
                         });
-                return;
             }
 
-            return failedCallback(res, {
-                error: 'please specific the catelogs'
+            return failedResponse(res, {
+                error: 'you don\'t specific the catelog id'
             });
 
         });
 
+
         //private
-        function failedCallback(res, error) {
-            return res.status(400).send({
-                error: error.message
+        function failedResponse(res, data){
+            return res.status(500).send({
+                error: data
             });
         }
 
-        function successCallback(res, data) {
+        function successResponse(res, data){
             return res.status(200).send(data);
+        }
+
+        function authenticateFailed(res, data){
+            return res.status(203).send({
+                error: 'don\'t get authorization'
+            });
         }
 
     };

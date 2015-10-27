@@ -1,61 +1,97 @@
-(function(feedsRequestSrv) {
+(function(rssRequestService) {
     'use strict';
 
     var Stream = require('stream');
     var _ = require('lodash');
     var FeedMe = require('feedme');
 
-    var httpRequest = require('./httpRequestService');
-    var FeedCatelog = require('../models/feedCatelog.js');
-    var Feed = require('../models/feeds.js');
-    var FeedUserRelation = require('../models/feedUserRelation.js');
+    var httpRequest = require('./httpRequestSrv');
 
-    feedsRequestSrv.requestFeedsResource = function(link) {
+    var RssCatelog = require('../models/rssCatelog.js');
+    var RssItem = require('../models/rssItem.js');
+    var RssUserMap = require('../models/rssUserMap.js');
+
+    var utils = require('./utilsSrv.js');
+
+    rssRequestService.requestRssResourceFrmNet = function(link) {
 
         return httpRequest.request(link)
             .then(function(data) {
                 var parser = new FeedMe(true);
                 parser.write(data);
                 return normalizeFeeds(link, parser.done());
-
             }, function(error) {
                 console.log(error);
                 return error;
             });
     };
 
-    feedsRequestSrv.updateCatelogs = function(catelogId) {
+    /*feedsRequestSrv.updateCatelogs = function(catelogId) {
         return getFeedItemsByCatelogId(catelogId);
+    };*/
+
+    /*data base query interface*/
+
+    rssRequestService.requestRssCatelogsByUserId = function(id) {
+        return getCatelogsByUserId(id);
     };
 
-    feedsRequestSrv.requestFeedCatelogs = function(userId) {
-        return getCatelogsByUserId(userId);
+    rssRequestService.requestRssItemsByCatelogId = function(id) {
+        return getItemsByCatelogId(id);
     };
 
-
-
-    feedsRequestSrv.requestFeedsByCatelogId = function(catelogId) {
-        return getFeedItemsByCatelogId(catelogId);
+    rssRequestService.requestRssItemContentByItemId = function(id){
+        return getRssItemContentById(id);
     };
-
-
 
 
     //private section
-    function getFeedItemsByCatelogId(id) {
-        return Feed.findItemsByCatelogId(id);
+    function getItemsByCatelogId(catelogId) {
+        return RssItem.getRssItemsByCatelogId(catelogId)
+                      .then(function(data){
+                        if(utils.isErrorObject(data)){
+                            return data;
+                        }
+
+                        if(!data || !data.length){
+                            return {
+                                error: 'don\'t find any items of the catelog'
+                            };
+                        }
+                        return data;
+                      });
     }
 
-
+    function getRssItemContentById(itemId){
+        console.log(itemId);
+        return RssItem.getRssItemContentById(itemId)
+                      .then(function(data){
+                        if(utils.isErrorObject(data)){
+                            return {
+                                error: error,
+                                message: 'getRssItemContentById occurs a problem'
+                            };
+                        }
+                        return data;
+                      });
+    }
 
     function getCatelogsByUserId(userId) {
-        return FeedUserRelation.findCatelogIdsByUserId(userId)
-            .then(function(catelogIds) {
-                return FeedCatelog.findCatelogsByUserIds(catelogIds);
-            }, function(error) {
-                console.log(error);
-                return error;
-            });
+        return RssUserMap.getCatelogIdsByUserId(userId)
+                         .then(function(data) {
+                            if(utils.isErrorObject(data)){
+                                return data;
+                            }
+                            var catelogIds = data;
+                            if(!!catelogIds && catelogIds.length){
+                                return RssCatelog.getCatelogsByIds(catelogIds);
+                            }
+                            else{
+                                return {
+                                    error: userId + 'don\' have any Rss resource'
+                                };
+                            }
+                        });
     }
 
 
@@ -75,7 +111,7 @@
             })
             .value();
 
-        var feedCatelog = {
+        var rssCatelog = {
             title: data.title,
             subtitle: !!data.subtitle ? data.subtitle : '',
             author: data.author.name,
@@ -83,27 +119,29 @@
             rsslink: url,
             updated: data.updated
         };
-        
+
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
+                var rssContent = item.content || item['content:encoded'];
                 return {
                     title: item.title,
                     link: item.link.href,
                     updated: item.updated,
                     author: item.author,
-                    content: item.content || item['content:encoded']
+                    content: rssContent,
+                    images: extractImagsFrmContent(rssContent)
                 };
             })
             .value();
         return {
-            catelog: feedCatelog,
-            feeds: normalizeFeeds
+            catelog: rssCatelog,
+            items: normalizeFeeds
         };
     }
 
 
     function generateRSSFeeds(data, url) {
-        var feedCatelog = {
+        var rssCatelog = {
             title: data.title,
             subtitle: !!data.description ? data.description : '',
             author: data.author,
@@ -111,25 +149,36 @@
             rsslink: url,
             updated: data.lastBuildDate
         };
-       
+
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
-            	console.log(item.link);
+            	var rssContent = item.content || item['content:encoded'];
                 return {
                     title: item.title,
                     link: item.link,
                     updated: item.pubdate,
                     author: '',
-                    content: item.content || item['content:encoded']
+                    content: rssContent,
+                    images: extractImagsFrmContent(rssContent)
                 };
             })
             .value();
         return {
-            catelog: feedCatelog,
-            feeds: normalizeFeeds
+            catelog: rssCatelog,
+            items: normalizeFeeds
         };
     }
 
+    function extractImagsFrmContent(content){
+        var reg = /<img\s[^>]*?src\s*=\s*['"]([^'"]*?)['"][^>]*?>/gi;
+        var imageUrls = [];
+
+        while(reg.exec(content)){
+            imageUrls.push((RegExp.$1));
+        }
+
+        return imageUrls;
+    }
 
 
 

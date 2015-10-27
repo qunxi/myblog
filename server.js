@@ -18,6 +18,8 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.set('SECRET_KEY', 'xxxx');
+
 //setup the controller
 controllers.init(app);
 

@@ -7,7 +7,7 @@
     userController.init = function(app) {
 
         //set up different secret for each app
-        var SECRET_KEY = "xxxx";
+        var SECRET_KEY = app.get('SECRET_KEY');
 
         /* 
          * register

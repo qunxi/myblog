@@ -19,6 +19,7 @@
     UserSchema.methods.comparePasswords = function(password, callback) {
         bcrypt.compare(password, this.password, callback);
     };
+
     UserSchema.statics.findUserById = function(id) {
         return this.findOne({
             _id: id

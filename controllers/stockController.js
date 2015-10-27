@@ -2,7 +2,7 @@
 
     stockController.init = function(app) {
 
-        var httpRequest = require('../services/httpRequestService.js');
+        var httpRequest = require('../services/httpRequestSrv.js');
 
         app.get('/api/stock', function(req, res) {
             var params = req.body;
