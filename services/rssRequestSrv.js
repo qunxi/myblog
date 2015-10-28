@@ -32,22 +32,25 @@
 
     /*data base query interface*/
 
-    rssRequestService.requestRssCatelogsByUserId = function(id) {
-        return getCatelogsByUserId(id);
+    rssRequestService.requestRssCatelogsByUserId = function(id, page, limit) {
+        return getCatelogsByUserId(id, page, limit);
     };
 
-    rssRequestService.requestRssItemsByCatelogId = function(id) {
-        return getItemsByCatelogId(id);
+    rssRequestService.requestRssItemsByCatelogId = function(id, page, limit) {
+        return getItemsByCatelogId(id, page, limit);
     };
 
     rssRequestService.requestRssItemContentByItemId = function(id){
         return getRssItemContentById(id);
     };
 
+    rssRequestService.requestRssCatelogsByText = function(query){
+        return getRssCatelogByText(query);
+    };
 
     //private section
-    function getItemsByCatelogId(catelogId) {
-        return RssItem.getRssItemsByCatelogId(catelogId)
+    function getItemsByCatelogId(catelogId, page, limit) {
+        return RssItem.getRssItemsByCatelogId(catelogId, page, limit)
                       .then(function(data){
                         if(utils.isErrorObject(data)){
                             return data;
@@ -76,7 +79,7 @@
                       });
     }
 
-    function getCatelogsByUserId(userId) {
+    function getCatelogsByUserId(userId, page, limit) {
         return RssUserMap.getCatelogIdsByUserId(userId)
                          .then(function(data) {
                             if(utils.isErrorObject(data)){
@@ -84,13 +87,19 @@
                             }
                             var catelogIds = data;
                             if(!!catelogIds && catelogIds.length){
-                                return RssCatelog.getCatelogsByIds(catelogIds);
+                                return RssCatelog.getCatelogsByIds(catelogIds, page, limit);
                             }
                             else{
                                 return {
                                     error: userId + 'don\' have any Rss resource'
                                 };
                             }
+                        });
+    }
+    function getRssCatelogByText(query){
+        return RssCatelog.getCatelogsByText(query)
+                         .then(function(data){
+                            return data;
                         });
     }
 

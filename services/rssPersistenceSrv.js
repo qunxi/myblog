@@ -1,6 +1,5 @@
 (function(rssPersistenceService) {
     var _ = require('lodash');
-    var Q = require('q');
 
     var RssCatelog = require('../models/rssCatelog.js');
     var RssItem = require('../models/rssItem.js');
@@ -26,30 +25,11 @@
                             });
 
 
-        /*var catelog = data.catelog;
-        var items = data.items;
 
-        var deferred = Q.defer();
 
-        if (catelog && feeds) {
 
-            return FeedCatelog.findFeedCatelogByUrl(catelog.rsslink)
-                .then(function(feedCatelog) {
 
-                    if (!!feedCatelog) {
-                        console.log('the resource has existed');
-                        return saveFeedItems(feedCatelog, feeds);
-                    }
 
-                    return saveFeedCatelog(catelog, feeds);
-                }, function(error) {
-                    return new Error('findFeedCatelogByUrl failed');
-                });
-        } else {
-            console.log('catelog and feeds data not correct');
-            deferred.reject(new Error('catelog and feeds data not correct'));
-            return deferred.promise;
-        }*/
 
     };
 

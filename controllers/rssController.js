@@ -67,14 +67,15 @@
         app.get('/api/rss/catelog', function(req, res) {
         	//get must use query to get param
             var token = req.query.token;
-            
+            var page = req.query.page;
+            var limit = !!req.query.limit ? req.query.limit : 10;
             if (!!token) {
                authenticate.verification(token, SECRET_KEY)
                            .then(function(user){
                                 if(utils.isErrorObject(user)){
                                     return  authenticateFailed(res, user);
                                 }
-                                return rssRequest.requestRssCatelogsByUserId(user._id)
+                                return rssRequest.requestRssCatelogsByUserId(user._id, page, limit)
                                                 .then(function(catelogs) {
                                                     if(utils.isErrorObject(catelogs)){
                                                         return failedResponse(res, catelogs);
@@ -83,6 +84,30 @@
                                                 });
                             });
             }
+        });
+         app.post('/api/rss/catelog', function(req, res) {
+            var token = req.body.token;
+            var catelogId = req.body.catelogId;
+            if(!token || !catelogId){
+                return {
+                    error: new Error('token or catelogId is empty'),
+                    message: 'token or catelogId is empty'
+                };
+            }
+            console.log('/api/rss/catelog');
+            authenticate.verification(token, SECRET_KEY)
+                        .then(function(user){
+                            if(utils.isErrorObject(user)){
+                                return authenticateFailed(res, user);
+                            }
+                            return rssPersistence.updateUserCatelogList(user._id, catelogId)
+                                                .then(function(data){
+                                                    if(utils.isErrorObject(data)){
+                                                        return failedResponse(res, data);
+                                                    } 
+                                                    return successResponse(res, data);
+                                                });
+                        });
         });
 
 
@@ -136,9 +161,11 @@
 
         app.get('/api/rss/items', function(req, res) {
             var catelogId = req.query.catelogId;
-            console.log(catelogId);
+            var page = req.query.page;
+            var limit = !!req.query.limit ? req.query.limit : 5;
+            //console.log(catelogId);
             if (!!catelogId) {
-                return rssRequest.requestRssItemsByCatelogId(catelogId)
+                return rssRequest.requestRssItemsByCatelogId(catelogId, page, limit)
                           .then(function(items) {
 
                             if (utils.isErrorObject(items)) {
@@ -154,6 +181,19 @@
 
         });
 
+        app.get('/api/rss/search', function(req, res) {
+            var query = req.query.q;
+            console.log(query);
+            if (!!query) {
+                return rssRequest.requestRssCatelogsByText(query)
+                          .then(function(items) {
+                            if (utils.isErrorObject(items)) {
+                                return failedResponse(res, items);
+                            }
+                            return successResponse(res, items);
+                        });
+            }
+        });
 
         //private
         function failedResponse(res, data){

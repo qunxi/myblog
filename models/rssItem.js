@@ -14,8 +14,8 @@
     });
 
     RssItemSchema.statics.bulkSaveRssItems = function(items){
-        console.log(items);
-        this.collection
+       
+        return this.collection
             .insert(items)
             .then(function(data) {
                 return {
@@ -31,11 +31,9 @@
     };
 
     RssItemSchema.statics.getLatestRssItemByCatelogId = function(catelogId) {
-        return this.findOne({
-                        'catelogId': catelogId
-                    }).sort({
-                        'updated': 'desc'
-                    })
+        return this.findOne({'catelogId': catelogId }, 
+                            '-content',
+                            {'updated': 'desc'})
                     .then(function(item){
                         return item;
                     }, function(error){
@@ -70,12 +68,14 @@
                    });
     };
 
-    RssItemSchema.statics.getRssItemsByCatelogId = function(catelogId) {
-        return this.find({
-                        'catelogId': catelogId })
-                   .sort({
-                        'updated': 'desc'})
-                   .select('-content')
+    RssItemSchema.statics.getRssItemsByCatelogId = function(catelogId, page, limit) {
+        console.log(page, limit);
+        return this.find({'catelogId': catelogId }, 
+                         '-content',
+                         {'updated': 'desc',
+                          'skip': page * limit,
+                          'limit': limit
+                         })
                    .then(function(items){
                         return items;
                     }, function(error){

@@ -30,9 +30,26 @@
                 });
     };
 
-    RssCatelogSchema.statics.getCatelogsByIds = function(catelogIds) {
+    RssCatelogSchema.statics.getCatelogsByText = function(query){
+        return this.find({$or: [{title: new RegExp(query, 'i')}, 
+                                {website: new RegExp(query, 'i')}, 
+                                {link: new RegExp(query, 'i')}]})
+                   .then(function(data){
+                        console.log(data);
+                        return data;
+                   }, function(error){
+                        return {
+                            error: error,
+                            message: 'query the rss occurs a problem'
+                        };
+                   });
+    };
+    RssCatelogSchema.statics.getCatelogsByIds = function(catelogIds, page, limit) {
         return this.find({
                     $or: catelogIds
+                    }, null, {
+                        skip: page * limit,
+                        limit: limit
                     })
                     .then(function(data){
                         return data;
