@@ -16,6 +16,17 @@
         tags: String
     });
 
+    RssCatelogSchema.statics.getAllOfCatelogs = function(){
+        return this.find({})
+                   .then(function(data){
+                        return data;
+                   }, function(error){
+                        return {
+                            error: error,
+                            message: 'get all of catelogs occurs a problem'
+                        };
+                   });
+    };
     RssCatelogSchema.statics.getRssCatelogByUrl = function(rsslink) {
         return this.findOne({
                     link: rsslink

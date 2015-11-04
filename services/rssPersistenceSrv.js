@@ -33,6 +33,9 @@
 
     };
 
+    rssPersistenceService.saveRssItems = function(catelog, items){
+        return saveRssItems(catelog, items);
+    };
     rssPersistenceService.removeSelectedRssUserMap = function(userId, catelogIds){
         return removeSelectedRssUserMap(userId, catelogIds);
     };

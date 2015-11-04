@@ -10,6 +10,7 @@
         var utils = require('../services/utilsSrv.js');
         var SECRET_KEY = app.get('SECRET_KEY');
 
+        var logger = app.get('appLogger');
         app.post('/api/rss', function(req, res) {
             var rssParams = req.body;
 
@@ -17,6 +18,7 @@
             var link = rssParams.link;
           
             if(!link){
+                logger.Error('link is empty in the /api/rss post');
                 return failedResponse(res, {error: new Error('the link is not valid')});
             }
 
@@ -24,10 +26,12 @@
                       .then(function(data){
                          
                           if(utils.isErrorObject(data)){
+                            logger.Error(link + 'at requestRssResourceFrmNet happened an error #error# ' + data);
                             return  failedResponse(res, data);
                           }
 
                           if(!data.items){
+                            logger.Error(link + 'don\'t have any catelog');
                             return failedResponse(res, {
                                 error: 'dont have any catelog'
                             });
@@ -36,6 +40,7 @@
                           rssPersistence.saveRssResource(data.catelog, data.items)
                                         .then(function(data){
                                             if(utils.isErrorObject(data)){
+                                                logger.Error('saveRssResource happened a problem catelog' + data.catelog + 'and items are' + data.items + ' #error# ' + data);
                                                 return  failedResponse(res, data);
                                             }
                                             //update catelog and user relations
@@ -44,13 +49,14 @@
                                                return  authenticate.verification(token, SECRET_KEY)
                                                         .then(function(user){
                                                                 if(utils.isErrorObject(user)){
+                                                                    logger.Error('token ' + token + 'verification failed #error# ' + user);
                                                                     return  authenticateFailed(res, user);
                                                                 }
                                                                
                                                                 return rssPersistence.updateUserCatelogList(user._id, catelog._id)
                                                                           .then(function(data){
-                                                                                //console.log(data);
                                                                                 if(utils.isErrorObject(data)){
+                                                                                    logger.Error('updateUserCatelogList failed in /api/rss the userid is ' + user._id + ' and catelog is' + catelog._id + ' #error# ' + data );
                                                                                     return  failedResponse(res, data);
                                                                                 }
                                                                                 return successResponse(res, catelog);
@@ -73,11 +79,13 @@
                authenticate.verification(token, SECRET_KEY)
                            .then(function(user){
                                 if(utils.isErrorObject(user)){
+                                    logger.Error('token ' + token + 'verification failed #error# ' + user);
                                     return  authenticateFailed(res, user);
                                 }
                                 return rssRequest.requestRssCatelogsByUserId(user._id, page, limit)
                                                 .then(function(catelogs) {
                                                     if(utils.isErrorObject(catelogs)){
+                                                        logger.Error('requestRssCatelogsByUserId failed in /api/rss/catelog and the userid is ' + user._id + ' #error# ' + user);
                                                         return failedResponse(res, catelogs);
                                                     }
                                                     return successResponse(res, catelogs);
@@ -89,20 +97,23 @@
             var token = req.body.token;
             var catelogId = req.body.catelogId;
             if(!token || !catelogId){
+                logger.Error('token and catelogid is empty token is ' + token + ' catelogId is ' + catelogId);
                 return {
                     error: new Error('token or catelogId is empty'),
                     message: 'token or catelogId is empty'
                 };
             }
-            console.log('/api/rss/catelog');
+           
             authenticate.verification(token, SECRET_KEY)
                         .then(function(user){
                             if(utils.isErrorObject(user)){
+                                logger.Error('token ' + token + 'verification failed #error# ' + user);
                                 return authenticateFailed(res, user);
                             }
                             return rssPersistence.updateUserCatelogList(user._id, catelogId)
                                                 .then(function(data){
                                                     if(utils.isErrorObject(data)){
+                                                        logger.Error('updateUserCatelogList failed in /api/rss/catelog the userid is ' + user._id + ' and catelog is' + catelog._id + ' #error# ' + data );                         
                                                         return failedResponse(res, data);
                                                     } 
                                                     return successResponse(res, data);
@@ -118,13 +129,14 @@
                 return rssRequest.requestRssItemContentByItemId(id)
                             .then(function(content){
                                 if(utils.isErrorObject(content)){
+                                    logger.Error('requestRssItemContentByItemId failed when id is ' + id + ' the #error# ' + content);
                                     return failedResponse(res, content);
                                 }
 
                                 return successResponse(res, content);
                             });
             }
-
+            logger.Error('you are not assign any content id for the /api/rss/itemContent');
             return failedResponse(res, {
                 error: 'you not specific the item id'
             });
@@ -139,12 +151,14 @@
                 return authenticate.verification(token, SECRET_KEY)
                             .then(function(user){
                                 if(utils.isErrorObject(user)){
+                                    logger.Error('token ' + token + 'verification failed #error# ' + user);
                                     return authenticateFailed(res, user);
                                 }
 
                                 return rssPersistence.removeSelectedRssUserMap(user._id, catelogIds)
                                                     .then(function(data){
                                                         if(utils.isErrorObject(data)){
+                                                            logger.Error('you didn\'t remove catelog successfully by token ' + token + ' and catelogIds is ' + catelogIds);
                                                             failedResponse(res, data);
                                                         }
                                                         
@@ -153,6 +167,7 @@
                             });
             }
 
+            logger.Error('you didn\'t setup any token or catelogs for the /api/rss/removeCatelogs ' + token + ' and catelogIds is ' + catelogIds);
             return failedResponse(res, {
                 error: 'you didn\'t reomve catelog success'
             });
@@ -163,18 +178,19 @@
             var catelogId = req.query.catelogId;
             var page = req.query.page;
             var limit = !!req.query.limit ? req.query.limit : 5;
-            //console.log(catelogId);
+           
             if (!!catelogId) {
                 return rssRequest.requestRssItemsByCatelogId(catelogId, page, limit)
                           .then(function(items) {
 
                             if (utils.isErrorObject(items)) {
+                                logger.Error('requestRssItemsByCatelogId failed when catelogId is ' + catelogId + ' #error# ' + items);
                                 return failedResponse(res, items);
                             }
                             return successResponse(res, items);
                         });
             }
-
+            logger.Error('catelogId is empty in the /api/rss/items');
             return failedResponse(res, {
                 error: 'you don\'t specific the catelog id'
             });
@@ -188,6 +204,7 @@
                 return rssRequest.requestRssCatelogsByText(query)
                           .then(function(items) {
                             if (utils.isErrorObject(items)) {
+                                logger.Error('requestRssCatelogsByText is failed in /api/rss/search #error# ' + items);
                                 return failedResponse(res, items);
                             }
                             return successResponse(res, items);

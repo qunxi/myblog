@@ -9,6 +9,7 @@
         updated: Date,
         author: String,
         content: String,
+        description: String,
         images: Array,
         catelogId: Types.ObjectId
     });
@@ -19,7 +20,7 @@
             .insert(items)
             .then(function(data) {
                 return {
-                    success: true
+                            success: data
                 };
             }, function(error) {
                 console.log(err.message);
@@ -32,8 +33,8 @@
 
     RssItemSchema.statics.getLatestRssItemByCatelogId = function(catelogId) {
         return this.findOne({'catelogId': catelogId }, 
-                            '-content',
-                            {'updated': 'desc'})
+                            '-content')
+                    .sort({'updated': 'desc'})
                     .then(function(item){
                         return item;
                     }, function(error){
@@ -51,6 +52,9 @@
                       
                       if(!!data){
                          if(!data.content){
+                            if(!!data.description){
+                                return data.description;
+                            }
                             return {
                                 hasContent: false,
                                 link: data.link,
@@ -72,10 +76,11 @@
         console.log(page, limit);
         return this.find({'catelogId': catelogId }, 
                          '-content',
-                         {'updated': 'desc',
+                         {
                           'skip': page * limit,
                           'limit': limit
                          })
+                   .sort({'updated': 'desc'})
                    .then(function(items){
                         return items;
                     }, function(error){

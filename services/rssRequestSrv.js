@@ -56,11 +56,7 @@
                             return data;
                         }
 
-                        if(!data || !data.length){
-                            return {
-                                error: 'don\'t find any items of the catelog'
-                            };
-                        }
+
                         return data;
                       });
     }
@@ -90,9 +86,10 @@
                                 return RssCatelog.getCatelogsByIds(catelogIds, page, limit);
                             }
                             else{
-                                return {
+                                /*return {
                                     error: userId + 'don\' have any Rss resource'
-                                };
+                                };*/
+                                return [];
                             }
                         });
     }
@@ -126,7 +123,7 @@
             author: data.author.name,
             website: !!mainUrl ? mainUrl.href : '',
             rsslink: url,
-            updated: data.updated
+            updated:  new Date(Date.parse(data.updated))
         };
 
         var normalizeFeeds = _.chain(data.items)
@@ -135,7 +132,8 @@
                 return {
                     title: item.title,
                     link: item.link.href,
-                    updated: item.updated,
+                    updated: new Date(Date.parse(item.updated)),
+                    description: item.summary,
                     author: item.author,
                     content: rssContent,
                     images: extractImagsFrmContent(rssContent)
@@ -156,7 +154,7 @@
             author: data.author,
             website: data.link,
             rsslink: url,
-            updated: data.lastBuildDate
+            updated: new Date(Date.parse(data.lastBuildDate))
         };
 
         var normalizeFeeds = _.chain(data.items)
@@ -165,8 +163,9 @@
                 return {
                     title: item.title,
                     link: item.link,
-                    updated: item.pubdate,
+                    updated: new Date(Date.parse(item.pubdate)),
                     author: '',
+                    description: item.description,
                     content: rssContent,
                     images: extractImagsFrmContent(rssContent)
                 };
@@ -188,113 +187,6 @@
 
         return imageUrls;
     }
-
-
-
-
-
-
-
-
-    /*rssParseService.requestRssResource = function(url, errCallback, successCallback){
-
-		var parser = new FeedMe(true);
-
-		//var rssJson = null;
-
-		httpRequest.request(url, null, function(data){
-			
-			parser.write(data);
-			
-			normalizeFeeds(url, parser.done(), errCallback, successCallback);	
-			
-		});
-	};
-
-	rssParseService.updateUserRssList = function(userId, catelogId){
-		var feedUserRelation = new FeedUserRelation({
-			userId: userId,
-			catelogId: catelogId
-		});	
-
-		feedUserRelation.save(function(err){
-
-		});
-	};
-
-	function normalizeFeeds(url, data, errCallback, successCallback){
-		var normalizeData = null;
-
-		if(data.type === 'atom'){
-			normalizeData = generateAtomFeeds(data, url);	
-		}
-		else{
-			normalizeData = generateRSSFeeds(data, url);	
-		}
-
-		console.log(normalizeData);
-		saveRssResource(normalizeData, errCallback, successCallback);
-	}
-
-    function saveRssResource(data, errCallback, successCallback) {
-    	var catelog = data.catelog;
-    	var feeds = data.feeds;
-
-        if (catelog && feeds) {
-
-            var newFeedCatelog = new FeedCatelog({
-                url: catelog.url,
-                link: catelog.link, //self
-                title: catelog.title,
-                subtitle: catelog.subtitle,
-                author: catelog.author,
-                updated: catelog.updated,
-                //class: rssParams.class,
-                //tags: rssParams.tags
-            });
-
-            newFeedCatelog.save(function(err) {
-                if (err) {
-                	errCallback();
-                	return;
-                }
-
-                var feed = Feed.findLatestFeed(newFeedCatelog._id);
-
-                //save feeds
-                if (!!feed) {
-                    feeds = _.chain(feeds)
-                        .filter(function(n) {
-                            return n.updated > feed.updated;
-                        })
-                        .map(function(n) {
-                            n.catelogId = newFeedCatelog._id;
-                        })
-                        .value();
-                } else {
-                    feeds = _.chain(feeds)
-                        .map(function(n) {
-                            n.catelogId = newFeedCatelog._id;
-                        })
-                        .value();
-                }
-
-                Feed.collection.insert(feeds, function(err, docs) {
-                    if (err) {
-                        errCallback();
-                        return;
-                    }
-                    successCallback();
-                });
-
-            });
-        }
-    }
-*/
-
-
-
-
 
 
 })(module.exports);
