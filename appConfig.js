@@ -16,15 +16,15 @@ var mongoose = require('mongoose');
     appConfig.bootstrapWeb = function(app){
         //setup CORS
         setupCors(app);
-        //setup mongodb
-    setupMongoDb();
-        //setup the controller
-        controllers.init(app);
         //setup SECRET_KEY
         app.set('SECRET_KEY', 'xxxx');
         //setup logger
         setupLogger(); 
         app.set('appLogger', log4js.getLogger('app'));
+        //setup the controller
+        controllers.init(app);
+        //setup mongodb
+        setupMongoDb();
 };
     function setupCors(app){
        app.use(function(req, res, next) {
