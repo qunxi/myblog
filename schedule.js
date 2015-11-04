@@ -4,7 +4,7 @@ var rssSchedule = require('./services/rssScheduleSrv.js');
 
 var appConfig = require('./appConfig.js');
 var job = new CronJob({
-	cronTime: '50 * * * * *', 
+	cronTime: '50 50 23 * * 0-6', 
 	onTick: function(){
         appConfig.bootstrapSchedule();
 
