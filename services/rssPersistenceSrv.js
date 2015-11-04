@@ -1,6 +1,6 @@
 (function(rssPersistenceService) {
     var _ = require('lodash');
-
+   
     var RssCatelog = require('../models/rssCatelog.js');
     var RssItem = require('../models/rssItem.js');
     var User = require('../models/user.js');
@@ -8,12 +8,13 @@
 
     var utils = require('./utilsSrv.js');
 
-    rssPersistenceService.saveRssResource = function(catelog, items) {
+     rssPersistenceService.saveRssResource = function(catelog, items) {
 
          return RssCatelog.getRssCatelogByUrl(catelog.rsslink)
                           .then(function(data) {
 
                                 if(utils.isErrorObject(data)){
+
                                     return data;
                                 }
 
@@ -23,19 +24,13 @@
                                 }
                                 return saveRssCatelog(catelog, items);
                             });
-
-
-
-
-
-
-
-
     };
+
 
     rssPersistenceService.saveRssItems = function(catelog, items){
         return saveRssItems(catelog, items);
     };
+
     rssPersistenceService.removeSelectedRssUserMap = function(userId, catelogIds){
         return removeSelectedRssUserMap(userId, catelogIds);
     };
@@ -54,10 +49,8 @@
         
         return rssUserMap.save()
                       .then(function(data){
-                         console.log(data);
                          return data;
                       }, function(error){
-                            console.log(error);
                             return {
                                 error: error,
                                 message: 'the relation mapping occurs problem'
@@ -118,7 +111,7 @@
                 }
 
                 var updatedItems = data;
-                
+               
                 if (!!updatedItems && updatedItems.length) {
                     
                     return RssItem.bulkSaveRssItems(updatedItems)

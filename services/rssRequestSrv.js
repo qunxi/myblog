@@ -56,7 +56,6 @@
                             return data;
                         }
 
-
                         return data;
                       });
     }
@@ -93,20 +92,34 @@
                             }
                         });
     }
+
     function getRssCatelogByText(query){
         return RssCatelog.getCatelogsByText(query)
                          .then(function(data){
                             return data;
-                        });
+                          });
     }
 
 
     function normalizeFeeds(selfLink, data) {
+        if(!verfyRssData(data)){
+            return {
+                error: 'the data is not valid rss data'
+            };
+        }
+
         if (data.type === 'atom') {
             return generateAtomFeeds(data, selfLink);
         }
 
         return generateRSSFeeds(data, selfLink);
+    }
+
+    function verfyRssData(data){
+        if(data.type === undefined && data.title === undefined){
+            return false;
+        }
+        return true;
     }
 
     function generateAtomFeeds(data, url) {
