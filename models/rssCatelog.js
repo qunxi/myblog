@@ -16,6 +16,7 @@
         tags: String
     });
 
+
     RssCatelogSchema.statics.getAllOfCatelogs = function(){
         return this.find({})
                    .then(function(data){
@@ -27,6 +28,8 @@
                         };
                    });
     };
+
+
     RssCatelogSchema.statics.getRssCatelogByUrl = function(rsslink) {
         return this.findOne({
                     link: rsslink
@@ -55,6 +58,7 @@
                         };
                    });
     };
+
     RssCatelogSchema.statics.getCatelogsByIds = function(catelogIds, page, limit) {
         return this.find({
                     $or: catelogIds

@@ -1,8 +1,6 @@
 (function(rssScheduleService){
 
-
 var _ = require('lodash');
-
 var httpRequest = require('./httpRequestSrv.js');
 var rssRequest = require('./rssRequestSrv.js');
 var rssPersistence = require('./rssPersistenceSrv.js');

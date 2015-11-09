@@ -86,4 +86,4 @@
 
     module.exports = mongoose.model(model, RssUserMapSchema);
 
-})();
+})(module.exports);

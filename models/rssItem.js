@@ -17,18 +17,18 @@
     RssItemSchema.statics.bulkSaveRssItems = function(items){
        
         return this.collection
-            .insert(items)
-            .then(function(data) {
-                return {
+                   .insert(items)
+                   .then(function(data) {
+                        return {
                             success: data
-                };
-            }, function(error) {
-                console.log(err.message);
-                return {
-                    error: error,
-                    message: 'bulk save rss items occurs a problem'
-                };
-            });
+                        };
+                    }, function(error) {
+                        console.log(err.message);
+                        return {
+                            error: error,
+                            message: 'bulk save rss items occurs a problem'
+                        };
+                    });
     };
 
     RssItemSchema.statics.getLatestRssItemByCatelogId = function(catelogId) {

@@ -1,16 +1,13 @@
 (function(rssRequestService) {
     'use strict';
 
-    var Stream = require('stream');
     var _ = require('lodash');
     var FeedMe = require('feedme');
 
     var httpRequest = require('./httpRequestSrv');
-
     var RssCatelog = require('../models/rssCatelog.js');
     var RssItem = require('../models/rssItem.js');
     var RssUserMap = require('../models/rssUserMap.js');
-
     var utils = require('./utilsSrv.js');
 
     rssRequestService.requestRssResourceFrmNet = function(link) {
@@ -26,11 +23,7 @@
             });
     };
 
-    /*feedsRequestSrv.updateCatelogs = function(catelogId) {
-        return getFeedItemsByCatelogId(catelogId);
-    };*/
-
-    /*data base query interface*/
+     /*data base query interface*/
 
     rssRequestService.requestRssCatelogsByUserId = function(id, page, limit) {
         return getCatelogsByUserId(id, page, limit);
@@ -142,14 +135,17 @@
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
                 var rssContent = item.content || item['content:encoded'];
+                var description = item.summary;
+                var updated = item.updated || item.published;
+                var formated = formatContentAndDescription(rssContent, description, mainUrl);
                 return {
                     title: item.title,
                     link: item.link.href,
-                    updated: new Date(Date.parse(item.updated)),
-                    description: item.summary,
+                    updated: new Date(Date.parse(updated)),
+                    description: formated.description,
                     author: item.author,
-                    content: rssContent,
-                    images: extractImagsFrmContent(rssContent)
+                    content: formated.content,
+                    images: formated.images
                 };
             })
             .value();
@@ -173,14 +169,18 @@
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
             	var rssContent = item.content || item['content:encoded'];
+                var description = item.description;
+                var updated = item.pubdate || item.published;
+                var formated = formatContentAndDescription(rssContent, description, data.link);
+                
                 return {
                     title: item.title,
                     link: item.link,
-                    updated: new Date(Date.parse(item.pubdate)),
+                    updated: new Date(Date.parse(updated)),
                     author: '',
-                    description: item.description,
-                    content: rssContent,
-                    images: extractImagsFrmContent(rssContent)
+                    description: formated.description,
+                    content: formated.content,
+                    images: formated.images
                 };
             })
             .value();
@@ -190,15 +190,29 @@
         };
     }
 
-    function extractImagsFrmContent(content){
-        var reg = /<img\s[^>]*?src\s*=\s*['"]([^'"]*?)['"][^>]*?>/gi;
-        var imageUrls = [];
-
-        while(reg.exec(content)){
-            imageUrls.push((RegExp.$1));
+    function formatContentAndDescription(content, description, link) {
+       
+        var images = [];
+     
+        var format;
+        if (!!content) {
+           
+            format = utils.formatImageUrl(content, link);
+            content = format.content;
+            images = format.images;
+        } else if (!!description) {
+           
+            format = utils.formatImageUrl(description, link);
+            images = format.images;
+            description = format.content;
         }
 
-        return imageUrls;
+        console.log(description);
+        return {
+            content : content,
+            description: description,
+            images: images
+        };
     }
 
 

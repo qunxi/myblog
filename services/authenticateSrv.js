@@ -11,7 +11,7 @@
 					.then(function(data){	
 						return data;
 					}, function(error){
-						//console.log('#authenticateService#', error);
+						
 						return {
 							error: error,
 							message: 'authenticate occur a problem'
