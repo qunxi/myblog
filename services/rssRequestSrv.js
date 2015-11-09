@@ -207,7 +207,6 @@
             description = format.content;
         }
 
-        console.log(description);
         return {
             content : content,
             description: description,

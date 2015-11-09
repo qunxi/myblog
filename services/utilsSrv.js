@@ -12,12 +12,12 @@
 
 	UtilsService.formatImageUrl = function(content, link){
         var images = [];
-        
         $ = cheerio.load(content);
-      
+
+        var regExp = /^[\/|\\]/gi;
         $('img').each(function(i, elem){
             var src = $(this).attr('src');
-            regExp = /^[\/|\\]/gi;
+            
             if(regExp.test(src)){
                 var url = link + src;
                 $(this).attr('src', url);
@@ -30,10 +30,7 @@
 
         $('a').each(function(i, elem){
         	var href = $(this).attr('href');
-
-        	regExp = /^[\/|\\]/gi;
-
-        	if(regExp.text(href)){
+        	if(regExp.test(href)){
         		var url = link + href;
         		$(this).attr('href', url);
         	}
