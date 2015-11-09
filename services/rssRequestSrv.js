@@ -122,12 +122,14 @@
                 return !n.rel;
             })
             .value();
+            
+        mainUrl = !!mainUrl ? mainUrl.href : data.author.uri;
 
         var rssCatelog = {
             title: data.title,
             subtitle: !!data.subtitle ? data.subtitle : '',
             author: data.author.name,
-            website: !!mainUrl ? mainUrl.href : '',
+            website: mainUrl,
             rsslink: url,
             updated:  new Date(Date.parse(data.updated))
         };
@@ -137,10 +139,17 @@
                 var rssContent = item.content || item['content:encoded'];
                 var description = item.summary;
                 var updated = item.updated || item.published;
-                var formated = formatContentAndDescription(rssContent, description, mainUrl);
+
+                /*if(!rssCatelog.website){
+                    var index = item.link.href.indexOf('/', 7);
+                    rssCatelog.website = item.link.href.substr(0, index + 1);
+                }*/
+
+                var link = item.link instanceof Array && !!item.link.length ? item.link[0].href :item.limit.href;
+                var formated = formatContentAndDescription(rssContent, description, rssCatelog.website);
                 return {
                     title: item.title,
-                    link: item.link.href,
+                    link: link,
                     updated: new Date(Date.parse(updated)),
                     description: formated.description,
                     author: item.author,
@@ -171,7 +180,13 @@
             	var rssContent = item.content || item['content:encoded'];
                 var description = item.description;
                 var updated = item.pubdate || item.published;
-                var formated = formatContentAndDescription(rssContent, description, data.link);
+
+                /*if(!rssCatelog.website){
+                    var index = item.link.indexOf('/', 7);
+                    rssCatelog.website = item.link.substr(0, index + 1);
+                }*/
+
+                var formated = formatContentAndDescription(rssContent, description, rssCatelog.website);
                 
                 return {
                     title: item.title,
@@ -195,12 +210,12 @@
         var images = [];
      
         var format;
-        if (!!content) {
+        if (!!content && !!link) {
            
             format = utils.formatImageUrl(content, link);
             content = format.content;
             images = format.images;
-        } else if (!!description) {
+        } else if (!!description && !!link) {
            
             format = utils.formatImageUrl(description, link);
             images = format.images;
