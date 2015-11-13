@@ -4,6 +4,8 @@
 	var utilsService = require('../services/utilsSrv.js');
     jobController.init = function(app) {
 
+    	var logger = app.get('appLogger');
+
         app.get('/api/jobs', function(req, res) {
 
         	var query = req.query.query;
@@ -12,11 +14,11 @@
             var limit = req.query.limit;
             jobService.getJobsFromBaidu(query, city, page, limit)
             		  .then(function(data){
-            		  	console.log(data);
+            		  	
             		  	if(utilsService.isErrorObject(data)){
+            		  		logger.error(data.error);
             		  		return utilsService.failedResponse(res, data);
             		  	}
-            		  	console.log(data);
             		  	return utilsService.successResponse(res, data);
             		  });
         });

@@ -49,7 +49,6 @@
                                 {website: new RegExp(query, 'i')}, 
                                 {link: new RegExp(query, 'i')}]})
                    .then(function(data){
-                        console.log(data);
                         return data;
                    }, function(error){
                         return {

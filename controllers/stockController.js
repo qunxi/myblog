@@ -3,6 +3,7 @@
     stockController.init = function(app) {
 
         var httpRequest = require('../services/httpRequestSrv.js');
+        var logger = app.get('appLogger');
 
         app.get('/api/stock', function(req, res) {
             var params = req.body;
@@ -22,7 +23,7 @@
                     var jsonData = JSON.parse(data);
                     res.status(200).send(jsonData);
                 }, function(error) {
-                    console.log(error);
+                    logger.error(error);
                     res.status(400).send(error);
                 });
         });
@@ -34,10 +35,9 @@
                 var jsonData = JSON.parse(data);
                 if (jsonData.error) {
                     res.status(400).send(jsonData);
-                    console.log(jsonData);
+                    logger.error(jsonData);
                 } else {
                     res.status(200).send(jsonData);
-                    console.log(jsonData);
                 }
             });
         }

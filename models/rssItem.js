@@ -39,7 +39,6 @@
                             success: data
                         };
                     }, function(error) {
-                        console.log(err.message);
                         return {
                             error: error,
                             message: 'bulk save rss items occurs a problem'
@@ -89,7 +88,6 @@
     };
 
     RssItemSchema.statics.getRssItemsByCatelogId = function(catelogId, page, limit) {
-        console.log(page, limit);
         return this.find({'catelogId': catelogId }, 
                          '-content',
                          {

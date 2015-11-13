@@ -18,7 +18,6 @@
                 parser.write(data);
                 return normalizeFeeds(link, parser.done());
             }, function(error) {
-                console.log(error);
                 return error;
             });
     };
@@ -70,7 +69,6 @@
     }
 
     function getRssItemContentById(itemId){
-        console.log(itemId);
         return RssItem.getRssItemContentById(itemId)
                       .then(function(data){
                         if(utils.isErrorObject(data)){

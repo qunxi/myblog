@@ -117,7 +117,6 @@
                     return RssItem.bulkSaveRssItems(updatedItems)
                              .then(function(ret){
                                 if(!utils.isErrorObject(ret)){
-                                    console.log(ret);
                                     return catelog;
                                 }
                                 return ret;

@@ -28,7 +28,6 @@
 
                             feedback.save()
                                     .then(function(data){
-                                        //console.log(data);
                                         return utils.successResponse(res, data);
                                     }, function(error){
                                         return utils.failedResponse(res, {

@@ -22,7 +22,6 @@
                                     return {_id: n.catelogId};
                                 });
                     }, function(error){
-                        console.log(error);
                         return {
                             message : 'getCatelogIdsByUserId' + id + 'occur database query error',
                             error: error
@@ -41,7 +40,6 @@
                                     return {_id: n.userId};
                                 });
                     }, function(error){
-                        console.log(error);
                         return {
                             message : 'getUserIdsByCatelogId' + id + 'occur database query error',
                             error: error
@@ -51,7 +49,6 @@
 
 
     RssUserMapSchema.statics.removeSeelctedRss = function(rssUserIds){
-        console.log(rssUserIds);
         return this.remove({$or: rssUserIds})
                    .exec()
                    .then(function(data){
@@ -68,7 +65,6 @@
 
     RssUserMapSchema.pre('save', function(next) {
         var rssUser = this;
-        console.log('save', rssUser);
         mongoose.model(model, RssUserMapSchema)
                 .findOne({
                         catelogId: rssUser.catelogId,

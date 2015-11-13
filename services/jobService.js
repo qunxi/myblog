@@ -12,19 +12,16 @@
 				   encodeURIComponent(city) + '&pn=' + encodeURIComponent(page) + '&rn=' + encodeURIComponent(limit);
 		
 		//link = url + encodeURIComponent(link);
-		console.log(link);
 		return httpRequest.request(link)
             .then(function(data) {
                 var json = JSON.parse(data);
                 return normalizeJobs(json.data.data);
             }, function(error) {
-                console.log(error);
                 return error;
             });		
 	};
 
 	function normalizeJobs(data){
-		console.log(data);
 		if(!!data && !!data.disp_data){
 			var jobs = _.map(data.disp_data, function(n){
 						return {
@@ -50,9 +47,7 @@
 
 	function getRangOfAWeek(){
 		var now = new Date();
-		
 		var formatNow ='' + now.getFullYear() + (now.getMonth() + 1) + now.getDate();
-		console.log(formatNow);
 		var before7days = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
 		var format7Days = '' + before7days.getFullYear() + (before7days.getMonth() + 1) + before7days.getDate();
 		return format7Days + '_' + formatNow;
