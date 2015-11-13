@@ -41,7 +41,23 @@
         return getRssCatelogByText(query);
     };
 
+    rssRequestService.requestFavorRssPosts = function(){
+        return getRssPosts(0, 6);
+    };
+
     //private section
+
+    function getRssPosts(page, limit){
+        return RssItem.getLatestRssItems(page, limit)
+                      .then(function(data){
+                            if(utils.isErrorObject(data)){
+                                return data;
+                            }
+
+                            return data;
+                      });
+    }
+
     function getItemsByCatelogId(catelogId, page, limit) {
         return RssItem.getRssItemsByCatelogId(catelogId, page, limit)
                       .then(function(data){
@@ -95,6 +111,7 @@
 
 
     function normalizeFeeds(selfLink, data) {
+
         if(!verfyRssData(data)){
             return {
                 error: 'the data is not valid rss data'
@@ -122,7 +139,7 @@
                 return !n.rel;
             })
             .value();
-            
+
         mainUrl = !!mainUrl ? mainUrl.href : data.author.uri;
 
         var rssCatelog = {

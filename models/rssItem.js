@@ -14,6 +14,22 @@
         catelogId: Types.ObjectId
     });
 
+    RssItemSchema.statics.getLatestRssItems = function(page, limit){
+        return this.find({}, '-content', {
+                          'skip': page * limit,
+                          'limit': limit
+                         })
+                    .sort({'updated': 'desc'})
+                    .then(function(item){
+                        return item;
+                    }, function(error){
+                         return {
+                            message: 'data base query occur a problem when you query the latest item',
+                            error: error
+                        };
+                    });
+    };
+
     RssItemSchema.statics.bulkSaveRssItems = function(items){
        
         return this.collection

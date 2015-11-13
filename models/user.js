@@ -26,6 +26,26 @@
         });
     };
 
+    UserSchema.statics.updateUserPassword = function(userId, password){
+
+        bcrypt.genSalt(10, function(err, salt) {
+            if (err) return next(err);
+
+            bcrypt.hash(password, salt, null, function(err, hash) {
+                if (err) return next(err);
+                password = hash;
+                next();
+            });
+        });
+
+        return this.findOneAndUpdate({
+            _id: userId
+        }, {
+            password: password
+        }, {
+        });
+    };
+
     UserSchema.pre('save', function(next) {
         var user = this;
         if (!user.isModified('password')) {
