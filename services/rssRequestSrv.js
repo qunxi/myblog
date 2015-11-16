@@ -40,8 +40,8 @@
         return getRssCatelogByText(query);
     };
 
-    rssRequestService.requestFavorRssPosts = function(){
-        return getRssPosts(0, 6);
+    rssRequestService.requestAllRssPosts = function(page, limit){
+        return getRssPosts(page, limit);
     };
 
     //private section
@@ -109,7 +109,6 @@
 
 
     function normalizeFeeds(selfLink, data) {
-
         if(!verfyRssData(data)){
             return {
                 error: 'the data is not valid rss data'
@@ -134,7 +133,7 @@
 
         var mainUrl = _.chain(data.link)
             .find(function(n) {
-                return !n.rel;
+                return n.rel !== 'self';
             })
             .value();
 
@@ -143,7 +142,7 @@
         var rssCatelog = {
             title: data.title,
             subtitle: !!data.subtitle ? data.subtitle : '',
-            author: data.author.name,
+            author: !!data.author ? data.author.name : '',
             website: mainUrl,
             rsslink: url,
             updated:  new Date(Date.parse(data.updated))
@@ -154,13 +153,8 @@
                 var rssContent = item.content || item['content:encoded'];
                 var description = item.summary;
                 var updated = item.updated || item.published;
-
-                /*if(!rssCatelog.website){
-                    var index = item.link.href.indexOf('/', 7);
-                    rssCatelog.website = item.link.href.substr(0, index + 1);
-                }*/
-
-                var link = item.link instanceof Array && !!item.link.length ? item.link[0].href :item.limit.href;
+                var link = item.link instanceof Array && !!item.link.length ? item.link[0].href :item.link.href;
+                console.log(link);
                 var formated = formatContentAndDescription(rssContent, description, rssCatelog.website);
                 return {
                     title: item.title,

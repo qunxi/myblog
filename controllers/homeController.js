@@ -10,8 +10,12 @@
             res.status(200).send("hello world!!!");
         });
 
-        app.get('/api/favorPosts', function(req, res){
-            rssRequest.requestFavorRssPosts()
+        app.get('/api/posts', function(req, res){
+
+            var page = req.query.page;
+            var limit = req.query.limit;
+
+            rssRequest.requestAllRssPosts(page, limit)
                       .then(function(data){
                             if(utilsService.isErrorObject(data)){
                                 return utilsService.failedResponse(res, data);
