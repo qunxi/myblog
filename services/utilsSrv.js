@@ -9,8 +9,33 @@
 		return !!obj && obj.hasOwnProperty('warning');
 	};
 
+    UtilsService.failedResponse = function(res, data) {
+        return res.status(500).send({
+            error: data
+        });
+    };
 
-	UtilsService.formatImageUrl = function(content, link){
+    UtilsService.successResponse = function(res, data) {
+        return res.status(200).send(data);
+    };
+
+    UtilsService.authenticateFailed = function(res, data) {
+        return res.status(203).send({
+            error: 'don\'t get authorization'
+        });
+    };
+
+
+    UtilsService.formatImageUrl = function(content, link){
+        if(typeof content !== 'string'){
+            console.log('error!! the content not a string object');
+        }
+
+        return parseHtmlDome(content, link);
+    };
+
+
+    function parseHtmlDome(content, link){
         var images = [];
         $ = cheerio.load(content);
 
@@ -27,36 +52,19 @@
                 images.push(src);
             }
         });
-
+        
         $('a').each(function(i, elem){
-        	var href = $(this).attr('href');
-        	if(regExp.test(href)){
-        		var url = link + href;
-        		$(this).attr('href', url);
-        	}
+            var href = $(this).attr('href');
+            if(regExp.test(href)){
+                var url = link + href;
+                $(this).attr('href', url);
+            }
         });
-
+        
         return  {
             images: images,
             content: $.html()
         };
-    };
-
-
-    UtilsService.failedResponse = function(res, data) {
-        return res.status(500).send({
-            error: data
-        });
-    };
-
-    UtilsService.successResponse = function(res, data) {
-        return res.status(200).send(data);
-    };
-
-    UtilsService.authenticateFailed = function(res, data) {
-        return res.status(203).send({
-            error: 'don\'t get authorization'
-        });
-    };
+    }
 
 })(module.exports);

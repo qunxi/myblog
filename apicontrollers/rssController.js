@@ -37,13 +37,14 @@
                                 error: 'dont have any catelog'
                             });
                           }
-
+                         
                           rssPersistence.saveRssResource(data.catelog, data.items)
                                         .then(function(data){
                                             if(utils.isErrorObject(data)){
                                                 logger.error('saveRssResource happened a problem catelog' + data.catelog + 'and items are' + data.items + ' #error# ' + data);
                                                 return  failedResponse(res, data);
                                             }
+
                                             //update catelog and user relations
                                             var catelog = data;
                                             if(!!token){
@@ -127,6 +128,7 @@
             var id = req.query.itemId;
             
             if(!!id){
+                console.log(id);
                 return rssRequest.requestRssItemContentByItemId(id)
                             .then(function(content){
                                 if(utils.isErrorObject(content)){

@@ -9,8 +9,6 @@ var app = express();
 //setup bodyparser
 app.use(bodyParser.json());
 
-
-
 //setup the configuration
 appConfig.bootstrapWeb(app);
 

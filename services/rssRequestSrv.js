@@ -145,16 +145,17 @@
             author: !!data.author ? data.author.name : '',
             website: mainUrl,
             rsslink: url,
-            updated:  new Date(Date.parse(data.updated))
+            updated: new Date(Date.parse(data.updated))
         };
 
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
-                var rssContent = item.content || item['content:encoded'];
+                var rssContent = getItemContent(item);
+                
                 var description = item.summary;
-                var updated = item.updated || item.published;
+                var updated = item.published || item.updated;
                 var link = item.link instanceof Array && !!item.link.length ? item.link[0].href :item.link.href;
-                console.log(link);
+                
                 var formated = formatContentAndDescription(rssContent, description, rssCatelog.website);
                 return {
                     title: item.title,
@@ -173,6 +174,10 @@
         };
     }
 
+    function getItemContent(item){
+        var rssContent = item.content || item['content:encoded'];
+        return rssContent.text || rssContent;
+    }
 
     function generateRSSFeeds(data, url) {
         var rssCatelog = {
@@ -186,7 +191,7 @@
 
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
-            	var rssContent = item.content || item['content:encoded'];
+            	var rssContent = getItemContent(item);
                 var description = item.description;
                 var updated = item.pubdate || item.published;
 

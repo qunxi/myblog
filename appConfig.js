@@ -2,6 +2,7 @@
 
     var log4js = require('log4js');
     var mongoose = require('mongoose');
+    var apicontrollers = require('./apicontrollers');
     var controllers = require('./controllers');
 
     appConfig.bootstrapSchedule = function() {
@@ -23,8 +24,11 @@
         //setup logger
         setupLogger(); 
         app.set('appLogger', log4js.getLogger('app'));
-        //setup the controller
-        controllers.init(app);
+        //setup the api controller
+        apicontrollers.init(app);
+        //setup controller
+        app.set('view engine', 'ejs');
+        controllers.init(app); 
         //setup mongodb
         setupMongoDb();
     };
