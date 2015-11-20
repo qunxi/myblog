@@ -14,8 +14,7 @@
 				<img src="{{post.images[0]}}"/>
 			</a>
 		</div>
-		<div class="entry-summary">
-			<p>{{post.description}}</p>
+		<div class="entry-summary" ng-bind-html="post.description">
 		</div>
 	</div>
 	<div>
