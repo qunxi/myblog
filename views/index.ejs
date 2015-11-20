@@ -1,1 +1,24 @@
-你好
+<div class="post-list" ng-controller="PostCtrl as vm">
+	<div class="post" ng-repeat="post in vm.posts">
+		<div class="entry-header">
+			<div class="post-title">
+				<a ng-href="{{post.link}}" target="_blank">{{post.title}}</a>
+			</div>
+			<div class="post-property">
+				<sapn>{{post.updated}} | </sapn>
+				<a href="#">published:{{post.site}}</a>	
+			</div>
+		</div>
+		<div class="entry-body">
+			<a ng-href="{{post.link}}">
+				<img src="{{post.images[0]}}"/>
+			</a>
+		</div>
+		<div class="entry-summary">
+			<p>{{post.description}}</p>
+		</div>
+	</div>
+	<div>
+		<a ng-click="vm.showMorePosts()">More</a>
+	</div>
+</div>				

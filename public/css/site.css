@@ -1,0 +1,72 @@
+html{
+	font-size: 16px;
+}
+
+body{
+	margin: 0;
+    font: 0.75em/1.75em 'Arial', Helvetica, Arial, sans-serif;
+    color: #525252;
+}
+
+#content{
+	padding: 50px 15px;
+}
+.post-list{
+    margin: 10px 10px;
+}
+
+.post{
+	font-family: 微软雅黑, hei, 黑体, Arial, Helvetica, sans-serif;
+	max-width: 400px;
+    height: 260px;
+    min-height: 130px;
+	margin: 0 20px 35px 0;
+    position: relative;
+    float: left;
+    border-bottom: 1px dotted;
+}
+
+.post-title{
+	font-size: 18px;
+	margin: 0 0 0 0;
+    padding: 0;
+    text-transform: uppercase;
+    line-height: 1.5em;
+    height: 1.5em;
+    overflow: hidden;
+    border: none;
+    color: #111;
+    word-spacing: 2px;
+    word-wrap: break-word;
+}
+
+.post-property{
+	margin-bottom: 15px;
+    height: 18px;
+    line-height: 20px;
+    color: #bbb;
+    font-size: 12px;
+}
+
+.post a img{
+	width: 400px;
+    height: 140px;
+    margin-bottom: 15px;
+}
+
+.entry-summary{
+	margin: 0 0 1.6em 0;
+}
+
+.post-share{
+    position: absolute;
+    top: 176px;
+    top: 175px/9;
+    right: 0;
+    z-index: 10;
+    color: #fff;
+    background: #0da4d3;
+    padding: 2px 8px;
+    font-size: 0.9166666666666667em;
+    display: none;
+}

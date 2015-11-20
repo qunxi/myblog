@@ -1,6 +1,7 @@
 ﻿var http = require('http');
 var express = require('express');
 var bodyParser = require('body-parser');
+var ejsLayouts = require("express-ejs-layouts");
 
 var appConfig = require('./appConfig.js');
 
@@ -8,6 +9,8 @@ var app = express();
 
 //setup bodyparser
 app.use(bodyParser.json());
+app.use(express.static(__dirname + '/public'));
+app.use(ejsLayouts);
 
 //setup the configuration
 appConfig.bootstrapWeb(app);
