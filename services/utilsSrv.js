@@ -1,13 +1,13 @@
-(function(UtilsService){
-	var cheerio = require('cheerio');
+(function(UtilsService) {
+    var cheerio = require('cheerio');
 
-	UtilsService.isErrorObject = function(obj){
-		return !!obj && obj.hasOwnProperty('error');
-	};
+    UtilsService.isErrorObject = function(obj) {
+        return !!obj && obj.hasOwnProperty('error');
+    };
 
-	UtilsService.isWarningObject = function(obj){
-		return !!obj && obj.hasOwnProperty('warning');
-	};
+    UtilsService.isWarningObject = function(obj) {
+        return !!obj && obj.hasOwnProperty('warning');
+    };
 
     UtilsService.failedResponse = function(res, data) {
         return res.status(500).send({
@@ -26,8 +26,8 @@
     };
 
 
-    UtilsService.formatImageUrl = function(content, link){
-        if(typeof content !== 'string'){
+    UtilsService.formatImageUrl = function(content, link) {
+        if (typeof content !== 'string') {
             console.log('error!! the content not a string object');
         }
 
@@ -35,6 +35,7 @@
     };
 
     UtilsService.cutString = function(data, maxLength) {
+        data = htmlToPlaintext(data);
         if (data.length > maxLength) {
             return data.substr(0, maxLength) + '...';
         }
@@ -59,15 +60,19 @@
             ':' + newDate.getUTCSeconds();
     };
 
+    function htmlToPlaintext(text) {
+        return text ? String(text).replace(/<[^>]+>/gm, '') : '';
+    }
+
     function parseHtmlDome(content, link) {
         var images = [];
         $ = cheerio.load(content);
 
         var regExp = /^[\/|\\]/gi;
-        $('img').each(function(i, elem){
+        $('img').each(function(i, elem) {
             var src = $(this).attr('src');
-            
-            if(regExp.test(src)){
+
+            if (regExp.test(src)) {
                 var url = link + src;
                 $(this).attr('src', url);
                 images.push(url);
@@ -75,16 +80,16 @@
                 images.push(src);
             }
         });
-        
-        $('a').each(function(i, elem){
+
+        $('a').each(function(i, elem) {
             var href = $(this).attr('href');
-            if(regExp.test(href)){
+            if (regExp.test(href)) {
                 var url = link + href;
                 $(this).attr('href', url);
             }
         });
-        
-        return  {
+
+        return {
             images: images,
             content: $.html()
         };

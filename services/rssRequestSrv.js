@@ -45,8 +45,15 @@
     };
 
     //private section
-
     function getRssPosts(page, limit){
+
+        function getPostSource(link){
+            var items = link.split('.');
+            console.log(link);
+            console.log(items[0].slice(-3));
+            return items[0].slice(-3) === 'www' ? items[1]: items[0].split('/')[2] ;
+        }
+
         return RssItem.getLatestRssItems(page, limit)
                       .then(function(data){
                             if(utils.isErrorObject(data)){
@@ -65,7 +72,7 @@
                                     link: n.link,
                                     title: n.title,
                                     updated: n.updated,
-                                    source: n.link.split('.')[1]
+                                    source: getPostSource(n.link)
                                 };
 
                                 return item;

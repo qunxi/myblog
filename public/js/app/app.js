@@ -16,7 +16,7 @@
 	angular.module('app').factory('UtilsService', UtilsService);
 	function UtilsService(){
 		var service = {
-			cutString: cutString,
+			/*cutString: cutString,*/
 			formatDate: formatDate,
 			isErrorObject: isErrorObject
 		};
@@ -38,18 +38,18 @@
 				   ' ' + newDate.getUTCHours() + ':' + newDate.getUTCMinutes() + 
 				   ':' + newDate.getUTCSeconds();
 		}
-
+		
 		function isErrorObject(data){
 			
 			return !!data && data.hasOwnProperty('error');
 		}
 
-		function cutString(data, maxLength){
+		/*function cutString(data, maxLength){
 			if(data.length > maxLength){
 				return data.substr(0, maxLength) + '...';
 			}
 			return data;
-		}
+		}*/
 
 		return service;
 	}
@@ -71,7 +71,8 @@
 							res.data.items = _.map(res.data.items, function(n){
 					   	 		if(n.description){
 					   	 			n.updated = UtilsService.formatDate(n.updated);
-					   	 			n.description = $sce.trustAsHtml(UtilsService.cutString(n.description, 50));
+					   	 			
+					   	 			n.description = $sce.trustAsHtml(n.description, 50);
 					   	 		}
 					   	 		return n;
 					   	 	});
@@ -103,7 +104,6 @@
 					   		if(UtilsService.isErrorObject(data)){
 					   			vm.loaded = false;
 					   		}else{
-					   			console.log(data.items);
 					   			vm.posts = data.items;
 					   			vm.totalSize = data.count;
 					   			vm.loaded = true;
@@ -115,8 +115,6 @@
 			PostService.getPostsByDate(currentPage - 1, 6)
 					   .then(function(data){
 					   		vm.posts = data.items;
-					   		//vm.posts = vm.posts.concat(data);
-					   		//console.log(vm.posts);
 					   });
 		}
 	}
