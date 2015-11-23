@@ -1,0 +1,37 @@
+<div>
+	<div id="login" class="row" ng-controller="LoginCtrl as vm">
+		<div class="col-sm-6 col-md-4 col-md-offset-4">
+		<div class="logo">欢迎登录</div>
+		<form>
+			<input-ext type="email" placeholders="dddd" tip="" error="" ></input-ext>
+			<input-ext type="password" placeholders="ddd" tip="" error="" ></input-ext>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+			<a href="#" class="pull-right">注册</a>
+		</form>
+		</div>
+	</div>
+
+	<div id="register" class="row" ng-controller="RegisterCtrl as vm">
+		<div class="col-sm-6 col-md-4 col-md-offset-4">
+		<div class="logo">欢迎注册</div>
+		<form>
+			<input class="form-control form-group input-lg" type="text" placeholder="邮箱地址" ng-model="vm.email" ng-blur="vm.checkEmail(vm.email)"/>
+			<input class="form-control form-group input-lg" type="password" ng-model="vm.passwrod1" placeholder="输入密码" ng-blur="vm.checkPassword(vm.password1)"/>
+			<input class="form-control form-group input-lg" type="password" ng-model="vm.password2" placeholder="再次输入密码" ng-blur="vm.checkPasswordsEqual(vm.password2)"/>
+			<input class="form-group input-lg col-md-4" type="text" placeholder="验证码"/>
+			<img src="#" class="form-group col-md-4 pull-right" />
+			<button class="btn btn-lg btn-primary btn-block" type="submit">注册</button>
+		</form>
+	</div>
+</div>
+<style>
+	.logo{
+		vertical-align: bottom;
+		margin: 10px;
+		color：#eee;
+		font-size: 20px;
+		line-height: 100px;
+		height: 100px;
+		text-align: center;
+	}
+</style>

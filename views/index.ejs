@@ -1,23 +1,29 @@
+
 <div class="post-list" ng-controller="PostCtrl as vm">
-	<div class="post" ng-repeat="post in vm.posts">
+<div class="row">
+	<div class="post col-md-6 col-xs-12" ng-repeat="post in vm.posts">
 		<div class="entry-header">
 			<div class="post-title">
 				<a ng-href="{{post.link}}" target="_blank">{{post.title}}</a>
 			</div>
 			<div class="post-property">
 				<sapn>{{post.updated}} | </sapn>
-				<a href="#">published:{{post.site}}</a>	
+				<span>published: </span><a href="#" target="_blank"><span class="source">{{post.source}}</span></a>	
 			</div>
 		</div>
 		<div class="entry-body">
-			<a ng-href="{{post.link}}">
-				<img src="{{post.images[0]}}"/>
+			<a ng-href="{{post.link}}" target="_blank">
+				<img ng-if="post.images.length !== 0" src="{{post.images[0]}}"/>
+				<div class="image-holder" ng-if="post.images.length === 0">无图更精彩</div>
 			</a>
 		</div>
 		<div class="entry-summary" ng-bind-html="post.description">
 		</div>
 	</div>
-	<div>
-		<a ng-click="vm.showMorePosts()">More</a>
-	</div>
+	
 </div>				
+<div class="clearfix"></div>
+<div class="row" ng-if="vm.loaded">
+	<pagination page-size='5' total-size='vm.totalSize / 5' current-page="1" page-change="vm.showMorePosts(currentPage)"></pagination>
+</div>
+</div>

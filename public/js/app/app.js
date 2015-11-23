@@ -1,77 +1,123 @@
-angular.module('app', []);
+(function(){
+	angular.module('app', []);
 
-angular.module('app').constant('API_URL', 'http://www.wangqunxi.com/api/');
-//angular.module('app').constant('API_URL', 'http://localhost:3000/api/');
+	//angular.module('app').constant('API_URL', 'http://www.wangqunxi.com/api/');
+	angular.module('app').constant('API_URL', 'http://localhost:3000/api/');
 
-angular.module('app').factory('UtilsService', UtilsService);
-function UtilsService(){
-	var service = {
-		cutString: cutString
-	};
+	angular.module('app').controller('NavHeaderCtrl', NavHeaderCtrl);
+	NavHeaderCtrl.$inject = ['$window'];
 
-	function cutString(data, maxLength){
-		if(data.length > maxLength){
-			return data.substr(0, maxLength) + '...';
+	function NavHeaderCtrl($window){
+		var vm = this;
+		vm.path = $window.location.pathname;
+	}
+
+
+	angular.module('app').factory('UtilsService', UtilsService);
+	function UtilsService(){
+		var service = {
+			cutString: cutString,
+			formatDate: formatDate,
+			isErrorObject: isErrorObject
+		};
+
+		function formatDate(date){
+			var newDate = new Date();
+
+			if(!(date instanceof Date)){
+				var parseDate = Date.parse(date);
+				if(!!parseDate){
+					newDate = new Date(parseDate);
+				}
+			}else{
+				newDate = date;
+			}
+			
+			return newDate.getUTCFullYear() + '-' +
+			       (newDate.getUTCMonth() + 1) + '-' + newDate.getUTCDate() +
+				   ' ' + newDate.getUTCHours() + ':' + newDate.getUTCMinutes() + 
+				   ':' + newDate.getUTCSeconds();
 		}
-		return data;
+
+		function isErrorObject(data){
+			
+			return !!data && data.hasOwnProperty('error');
+		}
+
+		function cutString(data, maxLength){
+			if(data.length > maxLength){
+				return data.substr(0, maxLength) + '...';
+			}
+			return data;
+		}
+
+		return service;
 	}
 
-	return service;
-}
+	angular.module('app').factory('PostService', PostService);
+	PostService.$inject = ['$http', '$sce', 'API_URL', 'UtilsService'];
+	function PostService($http, $sce, API_URL, UtilsService){
 
-angular.module('app').factory('PostService', PostService);
-PostService.$inject = ['$http', 'API_URL'];
-function PostService($http, API_URL){
+		var service = {
+			getPostsByDate: getPostsByDate
+		};
 
-	var service = {
-		getPostsByDate: getPostsByDate
-	};
+		return service;
 
-	return service;
-
-	function getPostsByDate(page, limit){
-		var url = API_URL + 'posts';
-		return $http.get(url, {params: {page: page, limit: limit}})
-					.then(function(res){
-						return res.data;
-					},
-					function(res){
-						console.log(res);
-						return [];				
-					});
-	}
-}
-
-
-angular.module('app').controller('PostCtrl', PostCtrl);
-PostCtrl.$inject = ['$sce', 'PostService', 'UtilsService'];
-function PostCtrl($sce, PostService, UtilsService){
-	var vm = this;
-	vm.posts = [];
-	vm.showMorePosts = showMorePosts;
-
-	initPosts();
-
-	function initPosts(){
-		PostService.getPostsByDate(0, 6)
-				   .then(function(data){
-				   	 	vm.posts = _.map(data, function(n){
-				   	 		if(n.description){
-				   	 			console.log(UtilsService.cutString(n.description, 45));
-				   	 			n.description = $sce.trustAsHtml(UtilsService.cutString(n.description, 45));
-				   	 		}
-				   	 		return n;
-				   	 	});
-				   	 	console.log(vm.posts);
-				   });
+		function getPostsByDate(page, limit){
+			var url = API_URL + 'posts';
+			return $http.get(url, {params: {page: page, limit: limit}})
+						.then(function(res){
+							res.data.items = _.map(res.data.items, function(n){
+					   	 		if(n.description){
+					   	 			n.updated = UtilsService.formatDate(n.updated);
+					   	 			n.description = $sce.trustAsHtml(UtilsService.cutString(n.description, 50));
+					   	 		}
+					   	 		return n;
+					   	 	});
+					   	 	return res.data;
+						},
+						function(res){
+							console.log(res);
+							return [];				
+						});
+						
+		}
 	}
 
-	function showMorePosts(){
-		PostService.getPostsByDate(vm.posts.length / 6 + 1, 6)
-				   .then(function(data){
-				   		
-				   		vm.posts = vm.posts.concat(data);
-				   		console.log(vm.posts);
-				   });
+
+	angular.module('app').controller('PostCtrl', PostCtrl);
+	PostCtrl.$inject = ['PostService', 'UtilsService'];
+	function PostCtrl(PostService, UtilsService){
+		var vm = this;
+		vm.posts = [];
+		vm.showMorePosts = showMorePosts;
+		vm.loaded = false;
+		vm.totalSize = 0;
+
+		initPosts();
+
+		function initPosts(){
+			PostService.getPostsByDate(0, 6)
+					   .then(function(data){
+					   		if(UtilsService.isErrorObject(data)){
+					   			vm.loaded = false;
+					   		}else{
+					   			console.log(data.items);
+					   			vm.posts = data.items;
+					   			vm.totalSize = data.count;
+					   			vm.loaded = true;
+					   		}
+					   });
+		}
+
+		function showMorePosts(currentPage){
+			PostService.getPostsByDate(currentPage - 1, 6)
+					   .then(function(data){
+					   		vm.posts = data.items;
+					   		//vm.posts = vm.posts.concat(data);
+					   		//console.log(vm.posts);
+					   });
+		}
 	}
-} 
+})();

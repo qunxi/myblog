@@ -14,14 +14,26 @@
         catelogId: Types.ObjectId
     });
 
+    RssItemSchema.statics.getRssItemCount = function(){
+        return this.find({})
+                   .count()
+                   .then(function(n){
+                      return n;
+                   }, function(error){
+                      return {
+                            message: 'data base query occur a problem when you query the count of item',
+                            error: error
+                      };
+                   });
+    };
+
     RssItemSchema.statics.getLatestRssItems = function(page, limit){
-        return this.find({}, '-content', {
-                          'skip': page * limit,
-                          'limit': limit
-                         })
-                    .sort({'updated': 'desc'})
-                    .then(function(item){
-                        return item;
+        return this.find({})
+                   .skip(page * limit)
+                   .limit(limit)
+                   .sort({'updated': 'desc'})
+                   .then(function(items){
+                      return items;
                     }, function(error){
                          return {
                             message: 'data base query occur a problem when you query the latest item',

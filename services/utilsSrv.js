@@ -34,8 +34,32 @@
         return parseHtmlDome(content, link);
     };
 
+    UtilsService.cutString = function(data, maxLength) {
+        if (data.length > maxLength) {
+            return data.substr(0, maxLength) + '...';
+        }
+        return data;
+    };
 
-    function parseHtmlDome(content, link){
+    UtilsService.formatDate = function(date) {
+        var newDate = new Date();
+
+        if (!(date instanceof Date)) {
+            var parseDate = Date.parse(date);
+            if (!!parseDate) {
+                newDate = new Date(parseDate);
+            }
+        } else {
+            newDate = date;
+        }
+
+        return newDate.getUTCFullYear() + '-' +
+            (newDate.getUTCMonth() + 1) + '-' + newDate.getUTCDate() +
+            ' ' + newDate.getUTCHours() + ':' + newDate.getUTCMinutes() +
+            ':' + newDate.getUTCSeconds();
+    };
+
+    function parseHtmlDome(content, link) {
         var images = [];
         $ = cheerio.load(content);
 
@@ -47,8 +71,7 @@
                 var url = link + src;
                 $(this).attr('src', url);
                 images.push(url);
-            }
-            else{
+            } else {
                 images.push(src);
             }
         });

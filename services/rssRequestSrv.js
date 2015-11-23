@@ -52,8 +52,35 @@
                             if(utils.isErrorObject(data)){
                                 return data;
                             }
+                            var items = _.chain(data).map(function(n){
+                                if(!n.description){
+                                    n.description = n.content;
+                                }
+                                n.description = utils.cutString(n.description, 50);
+                                var item = {
+                                    _id: n._id,
+                                    catelog: n.catelogId,
+                                    description: n.description,
+                                    images: _.take(n.images, 1),
+                                    link: n.link,
+                                    title: n.title,
+                                    updated: n.updated,
+                                    source: n.link.split('.')[1]
+                                };
 
-                            return data;
+                                return item;
+                            });
+                            
+                            return RssItem.getRssItemCount()
+                                   .then(function(count){
+                                         if(utils.isErrorObject(count)){
+                                            return count;
+                                         }
+                                         return {
+                                            count: count,
+                                            items: items
+                                         };
+                                   });
                       });
     }
 
