@@ -1,29 +1,35 @@
-
 <div class="post-list" ng-controller="PostCtrl as vm">
 <div class="row">
-	<div class="post col-md-6 col-xs-12" ng-repeat="post in vm.posts">
-		<div class="entry-header">
-			<div class="post-title">
-				<a ng-href="{{post.link}}" target="_blank">{{post.title}}</a>
+	<div ng-if="!vm.loaded" style="text-align:center">
+		<img src="images/loading.gif"  width=30px height=30px/>
+		<p style="color:#f53e32">正在加载中请耐心等待...</p>
+	</div>
+	<div class="col-md-4 col-xs-12" ng-repeat="post in vm.posts">
+		<div class="post">
+			<div class="entry-header">
+				<div class="post-title">
+					<a ng-href="{{post.link}}" target="_blank">{{post.title}}</a>
+				</div>
+				<div class="post-property">
+					<sapn>{{post.updated}} | </sapn>
+					<span>published: </span><a href="#" target="_blank"><span class="source">{{post.source}}</span></a>	
+				</div>
 			</div>
-			<div class="post-property">
-				<sapn>{{post.updated}} | </sapn>
-				<span>published: </span><a href="#" target="_blank"><span class="source">{{post.source}}</span></a>	
+			<div class="entry-body">
+				<a ng-href="{{post.link}}" target="_blank">
+					<img ng-if="post.images.length !== 0" src="{{post.images[0]}}"/>
+					<div class="image-holder" ng-if="post.images.length === 0">无图更精彩</div>
+				</a>
 			</div>
-		</div>
-		<div class="entry-body">
-			<a ng-href="{{post.link}}" target="_blank">
-				<img ng-if="post.images.length !== 0" src="{{post.images[0]}}"/>
-				<div class="image-holder" ng-if="post.images.length === 0">无图更精彩</div>
-			</a>
-		</div>
-		<div class="entry-summary" ng-bind-html="post.description">
+			<div class="entry-summary" ng-bind-html="post.description">
+			</div>
 		</div>
 	</div>
-	
 </div>				
 <div class="clearfix"></div>
 <div class="row" ng-if="vm.loaded">
-	<pagination page-size='5' total-size='vm.totalSize / 6' current-page="1" page-change="vm.showMorePosts(currentPage)"></pagination>
+	<div class="col-md-6">
+		<pagination page-size='5' total-size='vm.totalSize' current-page="1" page-change="vm.showMorePosts(currentPage)"></pagination>
+	</div>
 </div>
 </div>

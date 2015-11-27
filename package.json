@@ -24,6 +24,8 @@
     "lodash": "^3.10.1",
     "log4js": "^0.6.27",
     "mongoose": "^4.1.7",
+    "nodemailer": "^1.10.0",
+    "nodemailer-smtp-transport": "^1.0.4",
     "passport": "^0.3.0",
     "passport-local": "^1.0.0",
     "q": "^1.4.1"

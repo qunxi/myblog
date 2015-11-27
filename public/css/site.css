@@ -4,11 +4,24 @@ html{
 
 body{
 	margin: 0;
-    font: 0.75em/1.75em 'Arial', Helvetica, Arial, sans-serif;
+    font: 12px/1.5 "Helvetica Neue",Helvetica,Tahoma,Arial,sans-serif;
     color: #656565;
-    background-color: #fff;
+    background: #f5f5f3;
 }
 
+ul, ol{
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover{
+    text-decoration: none;
+    
+}
 /*.navbar{
     border-radius: 0;
 }
@@ -29,13 +42,12 @@ body{
 
 .post{
 	font-family: 微软雅黑, hei, 黑体, Arial, Helvetica, sans-serif;
-    height: 270px;
+    height: 290px;
     min-height: 130px;
     margin: 15px 0;
     float: left;
     background-color: #fff;
     padding: 0px 5px 10px 5px;
-    border-radius: 4px;
 }
 
 .post-title{
@@ -48,14 +60,9 @@ body{
     color: #111;
     margin: 2px 0;
     word-wrap: break-word;
-    font-weight: bolder;
-    font-style: italic;
 }
 
-.post a{
-    text-decoration: none;
-    color: #000;
-}
+
 
 .post-property{
 	margin-bottom: 15px;
@@ -66,7 +73,7 @@ body{
 }
 
 .post-property .source{
-    color: #f69c55;
+    color: #333;
 }
 
 .post .entry-body{
@@ -81,7 +88,6 @@ body{
     box-shadow: 0px 6px 2px -4px #CCC;
     border: 1px solid;
     border-color: #ddd;
-    display: block;
     -moz-box-shadow: 0px 6px 2px -4px #CCC;
     -webkit-box-shadow: 0px 6px 2px -4px #CCC;
 }
@@ -91,12 +97,10 @@ body{
     text-align: center;
     font-size: 20px;
     color: #CCC;
-    text-decoration: none;
 }
 
 .post:hover {
-    transform: scale(1.01);
-    -webkit-transform: scale(1.01);
+    border: 2px solid #ff5f3e
 }
 
 .entry-summary{
@@ -104,7 +108,7 @@ body{
     max-width: 400px;
     word-wrap: break-word;
     font-size: 14px;
-    border-bottom: 2px dashed;
+    /*border-bottom: 2px dashed;*/
     min-height: 45px;
 }
 
@@ -124,3 +128,74 @@ body{
 .more{
     text-align: center;
 }
+
+
+.sidebar{
+    position: absolute;
+    float: left;
+    width: 220px;
+    z-index: 100;
+    
+}
+
+.nav-menu{
+    float: left;
+    padding: 0;
+}
+
+.nav-menu .menu-item {
+    float: left;
+    width: 200px;
+    padding: 0 10px 0 0;
+    line-height: 21px;
+    text-indent: 7px;
+}
+
+
+.nav-menu .menu-item a{
+    float: left;
+    width: 200px;
+    padding: 10px 10px;
+    color: #606566;
+    font-size: 14px;
+    line-height: 21px;
+    text-indent: 7px;
+    text-decoration: none;
+}
+
+
+
+.nav-menu .menu-item a:hover, .nav-menu .menu-item a.active{
+    color: #ff5f3e;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #fff;
+    border-left: 8px solid #ff5f3e;
+
+}
+
+.main-area{
+    margin:  0 0 0 250px;
+    padding: 15px 15px;
+    background-color: #fff;
+}
+
+.main-area .message{
+    margin: 0px 10px 10px;
+    color: #ff5f3e;
+    background-color: #fcf8e3;
+    
+}
+
+.form-group .note{
+   margin: 2px;
+   padding: 5px;
+   background-color: #ff5f3e;
+   color: #fff;
+   border-radius: 3px; 
+}
+
+.test{
+    height: 600px;
+}
+

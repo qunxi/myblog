@@ -20,7 +20,7 @@
 			controller: function($scope){
 			},
 			link: function(scope, element, attrs){
-								
+				scope.totalSize = Math.floor(scope.totalSize);
 				function getRange(start, end){
 					var range = [];
 					for(var i = start > scope.totalSize ? scope.totalSize : start; i <= (end < scope.totalSize ? end : scope.totalSize); ++i){
@@ -69,78 +69,114 @@
 
 
 	angular.module('app').directive('inputExt', inputExt);
-
-	function inputExt(){
-
-        function checkPassword(password) {
-            var reg = new RegExp('^[\\W\\w]{6,15}$', 'g');
-            return reg.test(password) || (password && !password.length);
+	inputExt.$inject = ['AccountService'];
+	function inputExt(AccountService){
+        function verification(type, text, compare) {
+            if (type === 'password' && !compare)
+                return AccountService.checkPassword(text);
+            if (type === 'email')
+                return AccountService.checkEmail(text);
+            if (type === 'password' && !!compare)
+                return AccountService.checkPasswordsEqual(text, compare);
+            if (type === 'captcha')
+                return AccountService.checkCaptcha(text);
         }
 
-        function checkPasswordsEqual(password1, password2) {
-            return password1 === password2 || (email && !password2.length);
-        }
-
-        function checkEmail(email) {
-            var reg = new RegExp('^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$',
-                'g');
-            return reg.test(email) || (email && !email.length);
-        }
-
-        function checkCaptcha(captcha){
-        	var reg = new RegExp('^[A-Za-z0-9]{4}$', 'gi');
-            return reg.test(captcha) || (captcha && !captcha.length);
-        }
-
-        function verification(type){
-
-        	switch(type){
-        		case type === 'password':
-        			return checkPassword;
-        		case type === 'email':
-        			return checkEmail;
-        		case type === 'second-password':
-        			return checkPasswordsEqual;
-        		case type === 'captcha':
-        			return checkCaptcha;
-        	}
-
+        function convertNativeType(type){
+        	if(type === 'captcha' || type === 'email')
+        		return 'text';   	
+        	return type;
         }
 
 		return {
 			restrict: 'E',
-			template: '<input class="form-control form-group input-lg" type="{{type}}"" placeholder="{{placeholders}}"/>',
+			template: '<input class="form-control" type="{{nativeType}}" placeholder="{{placeholder}}" ng-model="model"/>',
 			scope:{
-				placeholders: '=',
-				type: '=',
-				tip: '=',
-				error: '='
+				placeholder: '@',
+				type: '@',
+				tip: '@',
+				error: '@',
+				model: '=',
+				compare: '='
 			},
 			link: function(scope, element, attrs){
-				console.log(scope.placeholders);
-				console.log(scope.type);
-				var input = element;
+				var input = element.find('input');
+				scope.nativeType = convertNativeType(scope.type);
                 input.on('focus', function(evt) {
-
                     element.find('span').remove();
-
+                    
                     if (scope.tip) {
-                        input.parent().after('<span class="tip">' + scope.tip + '</span>');
+                    	
+                        input.after('<span style="display: block; padding: 5px; color: #999; flex: 1 220px;">' + scope.tip + '</span>');
                     }
+                    input.parent().removeClass('has-success');
+                    input.parent().removeClass('has-error');
                 });
 
                 input.on('blur', function(evt) {
                     element.find('span').remove();
-                    //console.log(scope.checkHandle());
-                    if (!verification(scope.type)) {
-                        input.parent().after('<span class="error">' + scope.error + '</span>');
+                    
+                    if (!verification(scope.type, scope.model, scope.compare)) {
+                    	input.parent().removeClass('has-success');
+                    	input.parent().addClass('has-error');
+                        input.after('<span style="display: block; padding: 5px; color: #e42012; flex: 1 220px;">' + scope.error + '</span>');
+                    }
+                    else{
+                    	input.parent().removeClass('has-error');
+                    	input.parent().addClass('has-success');
                     }
                 });
 			}
 		};
 	}
 
+	angular.module('app').directive('sideBar', sideBar);
+	sideBar.$inject = ['UtilsService'];
 
+	function sideBar(UtilsService){
+		return {
+			restrict: 'E',
+			template: '<ul class="nav-menu" ng-mouseenter="mouseIn()", ng-mouseleave="mouseOut()">' +
+					  '<li class="menu-item" ng-repeat="menuItem in menuItems"><a ng-class="{active: menuItem.active}" ng-href="{{menuItem.url}}" >{{menuItem.text}}</a></li>' +
+					  '</ul>',
+			scope:{
+				menuItems: '=',
+			
+			},
+
+			link: function(scope, element, attrs){
+				scope.menuItems = [{text: '个人信息', url: '/account', active: true}, 
+								   {text: '朋友圈', url: '/#', active: false}, 
+								   {text: '修改密码', url: '/changepassword', active: false},
+								   {text: '我的订阅', url: '/subscribe', active: false},
+								   {text: '我的工作', url: '/#', active: false}];
+				
+				scope.mouseIn = function(){
+					var lis = element.find('ul li');
+
+					for(var i = 0; i < lis.length; ++i){
+						var aElement = angular.element(lis[i]).find('a');
+						if(aElement.hasClass('active')){
+							aElement.removeClass('active');
+							break;
+						}
+					}
+				};
+
+				scope.mouseOut = function(){
+					var lis = element.find('ul li');
+					
+					for(var i = 0; i < lis.length; ++i){
+						var aElement = angular.element(lis[i]).find('a');
+						if(aElement.attr('href') === UtilsService.getLocationPath()){
+							aElement.addClass('active');
+						}
+
+					}
+				};
+			}
+		};
+	}
 
 
 })();

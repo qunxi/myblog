@@ -1,0 +1,51 @@
+<div>
+	<div id="login" class="row" ng-controller="LoginCtrl as vm">
+		<div ng-if="vm.showLogin" class="col-sm-5 col-md-3 col-md-offset-5">
+			<div class="logo">欢迎登录</div>
+			<form>
+				<div class="form-group">
+				    <input-ext type="email" placeholder="输入注册邮箱" error="输入有效的注册邮箱" model="vm.email"></input-ext>
+				</div>
+				<div class="form-group">
+				    <input-ext type="password" placeholder="输入密码" error="输入有效的密码" model="vm.password"></input-ext>
+				</div>
+				<button class="btn btn-primary btn-block" type="submit" ng-click="vm.login()">登录</button>
+				<span ng-if="vm.failed">用户名密码不正确</span>
+				<a href="/register" class="pull-right" style="padding: 10px; text-decoration:none">注册</a>
+			</form>
+		</div>
+	</div>
+
+	<div id="register" class="row" ng-controller="RegisterCtrl as vm">
+		<div ng-if="vm.showRegister" class="col-sm-5 col-md-3 col-md-offset-5">
+			<div class="logo">欢迎注册</div>
+			<form>
+				<div class="form-group">
+				    <input-ext type="email" placeholder="邮箱地址" error="输入注册邮箱不正确" tip="输入有效的邮箱地址(example@email.com)" model="vm.email"></input-ext>
+				</div>
+				<div class="form-group">
+				    <input-ext type="password" placeholder="输入密码" error="输入密码不相同或密码位数不正确" tip="6-16 为数字，字母(字母区分大小写)或符号" model="vm.password1" compare="vm.password2"></input-ext>
+				</div>
+				<div class="form-group">
+				    <input-ext type="password" placeholder="再次输入密码"  error="输入密码不相同或密码位数不正确" tip="请再次输入相同的密码" model="vm.password2" compare="vm.password1"></input-ext>
+				</div>
+				<!--<div class="form-group">
+				    <input-ext type="captcha" class="col-md-4" style="padding-left:0" type="text" placeholder="验证码" error="验证码输入错误" tip="不区分大小写" model="vm.captcha"></input-ext>
+
+				</div>
+				<img src="#" class="form-group col-md-4 pull-right" />-->
+				<button class="btn btn-primary btn-block" type="submit" ng-click="vm.register()">注册</button>
+			</form>
+	    </div>
+</div>
+<style>
+	.logo{
+		vertical-align: bottom;
+		margin: 10px;
+		color：#eee;
+		font-size: 20px;
+		line-height: 100px;
+		height: 100px;
+		text-align: center;
+	}
+</style>

@@ -81,6 +81,7 @@
 
                 if (!user){
                     return res.status(401).send({
+                        error: 'Wrong eamil/password',
                         message: 'Wrong eamil/password'
                     });
                 }
@@ -95,6 +96,7 @@
 
                     if (!isMatch) {
                         return res.status(401).send({
+                            error: 'Wrong eamil/password',
                             message: 'Wrong eamil/password'
                         });
                     }
