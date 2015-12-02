@@ -23,7 +23,7 @@
         var req = http.request(opt, function(res) {
 
             var result = '';
-            res.setEncoding('utf8');
+            res.setEncoding('binary');
 
             res.on('data', function(chunk) {
                 result += chunk;

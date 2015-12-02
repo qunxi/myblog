@@ -11,6 +11,7 @@ var app = express();
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 app.use(ejsLayouts);
+app.set("layout extractScripts", true);
 
 //setup the configuration
 appConfig.bootstrapWeb(app);

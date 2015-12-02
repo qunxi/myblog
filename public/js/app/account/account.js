@@ -1,13 +1,13 @@
 angular.module('app').controller('LoginCtrl', LoginCtrl);
-LoginCtrl.$inject = ['AccountService', 'UtilsService'];
+LoginCtrl.$inject = ['accountService', 'utilsService', 'authToken'];
 
-function LoginCtrl(AccountService, UtilsService){
+function LoginCtrl(accountService, utilsService, authToken){
 	var vm = this;
 
 	vm.email = '';
 	vm.password = '';
 	vm.failed = false;
-	vm.showLogin = UtilsService.getLocationPath() === '/login';
+	vm.showLogin = utilsService.getLocationPath() === '/login';
 
 	vm.login = login;
 
@@ -16,17 +16,19 @@ function LoginCtrl(AccountService, UtilsService){
 		if(!vm.email || !vm.password){
 			return false;
 		}
-		if(!AccountService.checkEmail(vm.email) || !AccountService.checkPassword(vm.password)){
+		if(!accountService.checkEmail(vm.email) || !accountService.checkPassword(vm.password)){
 			return false;
 		}
 
-		AccountService.login(vm.email, vm.password)
+		accountService.login(vm.email, vm.password)
 					.then(function(data){
-						if(UtilsService.isErrorObject(data)){
-							console.log('ddd');
+						console.log(data);
+						if(utilsService.isErrorObject(data)){
+							
 							vm.failed = true;
 						}else{
-							UtilsService.redirectUrl('/about');
+							authToken.setCurrentUser(data);
+							utilsService.redirectUrl('/');
 						}
 					});
 					
@@ -36,38 +38,48 @@ function LoginCtrl(AccountService, UtilsService){
 
 
 angular.module('app').controller('RegisterCtrl', RegisterCtrl);
-RegisterCtrl.$inject = ['AccountService', 'UtilsService'];
+RegisterCtrl.$inject = ['accountService', 'utilsService'];
 
-function RegisterCtrl(AccountService, UtilsService){
+function RegisterCtrl(accountService, utilsService){
 	var vm = this;
 	vm.email = '';
 	vm.password1 = '';
 	vm.password2 = '';
 	vm.captcha = '';
 
-	vm.showRegister =  UtilsService.getLocationPath() === '/register';
+	vm.showRegister =  utilsService.getLocationPath() === '/register';
 
 	vm.register = register;
 
 	function register(){
-		if(!vm.email || !vm.password1 || !vm.password2 || !vm.captcha){
+		
+		if(!vm.email || !vm.password1 || !vm.password2 /*|| !vm.captcha*/){
 			return false;
 		}
-		if(!AccountService.checkEmail(vm.email) || !AccountService.checkPassword(vm.password1) ||
-		   !AccountService.checkPasswordsEqual(vm.password1, vm.password2) ||
-		   !AccountService.checkCaptcha(vm.captcha)){
+		if(!accountService.checkEmail(vm.email) || !accountService.checkPassword(vm.password1) ||
+		   !accountService.checkPasswordsEqual(vm.password1, vm.password2) /*||
+		   !accountService.checkCaptcha(vm.captcha)*/){
 			return false;
 		}
-		//console.log(vm.email, vm.password1, vm.passwrod2);
-		AccountService.register(vm.email, vm.password1);
+	
+		accountService.register(vm.email, vm.password1)
+					.then(function(data){
+						if(utilsService.isErrorObject(data)){
+							console.log(data);
+							utilsService.redirectUrl('/');
+							//vm.failed = true;
+						}else{
+							utilsService.redirectUrl('/login');
+						}
+					});
 	}
 }
 
 
-angular.module('app').factory('AccountService', AccountService);
-AccountService.$inject = ['$http', 'API_URL'];
+angular.module('app').factory('accountService', accountService);
+accountService.$inject = ['$http', 'API_URL'];
 
-function AccountService($http, API_URL){
+function accountService($http, API_URL){
 	var service = {
 		checkPassword: checkPassword,
 		checkEmail: checkEmail,
@@ -81,14 +93,13 @@ function AccountService($http, API_URL){
 
     function checkPassword(password) {
         var reg = new RegExp('^[\\W\\w]{6,15}$', 'g');
-        console.log(password);
+        
         //console.log(!!password);
         return reg.test(password); // || (!password);
     }
 
     function checkPasswordsEqual(password1, password2) {
-    	console.log('eq');
-        return password1 === password2 && !!passwrod2 && !!password1; // || (!password2);
+        return password1 === password2 && !!password2 && !!password1; // || (!password2);
     }
 
     function checkEmail(email) {
@@ -103,14 +114,27 @@ function AccountService($http, API_URL){
     }
 
     function register(email, password){
-
+    	
+    	return $http.post(API_URL + 'register', {
+    		email: email,
+    		password: password
+    	}).then(function(res){
+    		//console.log(res.data);
+    		return res.data;
+    	}, function(res){
+    		//console.log(res.data);
+    		return {
+    			error: res.data
+    		};
+    	});
     }
 
     function login(email, password){
     	return $http.post(API_URL + 'login', {
-    		username: email,
+    		email: email,
     		password: password
     	}).then(function(res){
+    		console.log(res.data);
     		return res.data;
     	}, function(res){
     		if(res.status == 401){

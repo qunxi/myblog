@@ -13,6 +13,7 @@
         author: String,
         updated: Date,
         classify: String,
+        icon: String,
         tags: String
     });
 

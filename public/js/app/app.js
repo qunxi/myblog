@@ -1,20 +1,31 @@
 (function(){
 	angular.module('app', []);
 
-	angular.module('app').constant('API_URL', 'http://www.wangqunxi.com/api/');
-	//angular.module('app').constant('API_URL', 'http://localhost:3000/api/');
+	//angular.module('app').constant('API_URL', 'http://www.wangqunxi.com/api/');
+	angular.module('app').constant('API_URL', 'http://localhost:3000/api/');
+	
 
 	angular.module('app').controller('NavHeaderCtrl', NavHeaderCtrl);
-	NavHeaderCtrl.$inject = ['UtilsService'];
+	NavHeaderCtrl.$inject = ['utilsService', 'authToken'];
 
-	function NavHeaderCtrl(UtilsService){
+	function NavHeaderCtrl(utilsService, authToken){
 		var vm = this;
-		vm.path = UtilsService.getLocationPath();
+		vm.path = utilsService.getLocationPath();
+		vm.isAuthenticated = authToken.isAuthenticated();
+		vm.username = authToken.getCurrentUser() ? authToken.getCurrentUser().email : '';
+
+		vm.logout = logout;
+
+		function logout(){
+			authToken.removeCurrentUser();
+			vm.isAuthenticated = false;
+		}
+		//console.log(vm.isAuthenticated, authToken.getToken());
 	}
 
-	angular.module('app').factory('PostService', PostService);
-	PostService.$inject = ['$http', '$sce', 'API_URL', 'UtilsService'];
-	function PostService($http, $sce, API_URL, UtilsService){
+	angular.module('app').factory('postService', postService);
+	postService.$inject = ['$http', '$sce', 'API_URL', 'utilsService'];
+	function postService($http, $sce, API_URL, utilsService){
 
 		var service = {
 			getPostsByDate: getPostsByDate
@@ -28,7 +39,7 @@
 						.then(function(res){
 							res.data.items = _.map(res.data.items, function(n){
 					   	 		if(n.description){
-					   	 			n.updated = UtilsService.formatDate(n.updated);
+					   	 			n.updated = utilsService.formatDate(n.updated);
 					   	 			
 					   	 			n.description = $sce.trustAsHtml(n.description, 50);
 					   	 		}
@@ -46,8 +57,8 @@
 
 
 	angular.module('app').controller('PostCtrl', PostCtrl);
-	PostCtrl.$inject = ['PostService', 'UtilsService'];
-	function PostCtrl(PostService, UtilsService){
+	PostCtrl.$inject = ['postService', 'utilsService'];
+	function PostCtrl(postService, utilsService){
 		var vm = this;
 		vm.posts = [];
 		vm.showMorePosts = showMorePosts;
@@ -60,9 +71,9 @@
 
 		
 		function initPosts(){
-			PostService.getPostsByDate(0, itemsOfPerPage)
+			postService.getPostsByDate(0, itemsOfPerPage)
 					   .then(function(data){
-					   		if(UtilsService.isErrorObject(data)){
+					   		if(utilsService.isErrorObject(data)){
 					   			vm.loaded = false;
 					   		}else{
 					   			vm.posts = data.items;
@@ -73,7 +84,7 @@
 		}
 
 		function showMorePosts(currentPage){
-			PostService.getPostsByDate(currentPage - 1, itemsOfPerPage)
+			postService.getPostsByDate(currentPage - 1, itemsOfPerPage)
 					   .then(function(data){
 					   		vm.posts = data.items;
 					   });

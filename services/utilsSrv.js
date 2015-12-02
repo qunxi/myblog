@@ -20,8 +20,8 @@
     };
 
     UtilsService.authenticateFailed = function(res, data) {
-        return res.status(203).send({
-            error: 'don\'t get authorization'
+        return res.status(401).send({
+            error: 'User authorized failed!'
         });
     };
 

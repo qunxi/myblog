@@ -1,8 +1,8 @@
-angular.module('app').factory('UtilsService', UtilsService);
+angular.module('app').factory('utilsService', utilsService);
 
-UtilsService.$inject = ['$window'];
+utilsService.$inject = ['$window'];
 
-function UtilsService($window) {
+function utilsService($window) {
     var service = {
         /*cutString: cutString,*/
         formatDate: formatDate,

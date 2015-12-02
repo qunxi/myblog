@@ -69,17 +69,17 @@
 
 
 	angular.module('app').directive('inputExt', inputExt);
-	inputExt.$inject = ['AccountService'];
-	function inputExt(AccountService){
+	inputExt.$inject = ['accountService'];
+	function inputExt(accountService){
         function verification(type, text, compare) {
             if (type === 'password' && !compare)
-                return AccountService.checkPassword(text);
+                return accountService.checkPassword(text);
             if (type === 'email')
-                return AccountService.checkEmail(text);
+                return accountService.checkEmail(text);
             if (type === 'password' && !!compare)
-                return AccountService.checkPasswordsEqual(text, compare);
+                return accountService.checkPasswordsEqual(text, compare);
             if (type === 'captcha')
-                return AccountService.checkCaptcha(text);
+                return accountService.checkCaptcha(text);
         }
 
         function convertNativeType(type){
@@ -131,9 +131,9 @@
 	}
 
 	angular.module('app').directive('sideBar', sideBar);
-	sideBar.$inject = ['UtilsService'];
+	sideBar.$inject = ['utilsService'];
 
-	function sideBar(UtilsService){
+	function sideBar(utilsService){
 		return {
 			restrict: 'E',
 			template: '<ul class="nav-menu" ng-mouseenter="mouseIn()", ng-mouseleave="mouseOut()">' +
@@ -168,7 +168,7 @@
 					
 					for(var i = 0; i < lis.length; ++i){
 						var aElement = angular.element(lis[i]).find('a');
-						if(aElement.attr('href') === UtilsService.getLocationPath()){
+						if(aElement.attr('href') === utilsService.getLocationPath()){
 							aElement.addClass('active');
 						}
 
@@ -177,6 +177,48 @@
 			}
 		};
 	}
+
+
+
+	angular.module('app').directive('postCatelog', postCatelog);
+	postCatelog.$inject = [];
+
+	function postCatelog(){
+
+		return {
+			restrict: 'E',
+			template: '<div class="catelog">' +
+					    '<img class="thumb-pic" ng-src="{{catelogData.icon}}"/>' +
+					  	'<div class="content">' +
+						  '<div class="title">' +
+						  	'<a>{{catelogData.title}}</a>' +
+						  '</div>' +
+						  '<div class="subtitle">' +
+						  	'<a>{{catelogData.subtitle}}</a>' +
+						  '</div>' +
+					  	  '<div class="property">' +
+							'<span>{{catelogData.updated}}</span>' +
+							'<span>{{catelogData.author}}</span>' +
+					  	'</div>' +
+					  '</div>',
+			scope:{
+				catelogData: '='
+			},
+			link: function(scope, element, attrs){
+				console.log(scope.catelogData);
+				/*scope.catelog = {
+					image: 'http://www.acfun.tv/favicon.ico',
+					title: '阿里巴巴 EUD 博客',
+					subtitle: 'good boy',
+					updateDate: '2015-3-3',
+					author: 'wqx'
+				};*/
+			}		  
+		};
+
+	}
+
+
 
 
 })();

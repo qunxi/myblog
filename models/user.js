@@ -7,7 +7,16 @@
     var UserSchema = new mongoose.Schema({
         email: String,
         username: String,
-        password: String
+        password: String,
+        actived: Boolean,
+        mobilePhone: String,
+        sex: Boolean,
+        address: String,
+        github: String,
+        blog: String,
+        description: String,
+        realName: String,
+        published: Boolean
     });
 
     UserSchema.methods.toJSON = function() {
@@ -24,6 +33,19 @@
         return this.findOne({
             _id: id
         });
+    };
+
+    UserSchema.statics.findUserByNameOrEmail = function(name, email) {
+        
+        var searchUser = {
+            $or: [{
+                username: name
+            }, {
+                email: email
+            }]
+        };
+
+        return this.findOne(searchUser);
     };
 
     UserSchema.statics.updateUserPassword = function(userId, password){

@@ -1,6 +1,6 @@
 (function(rssPersistenceService) {
     var _ = require('lodash');
-   
+
     var RssCatelog = require('../models/rssCatelog.js');
     var RssItem = require('../models/rssItem.js');
     var User = require('../models/user.js');
@@ -8,30 +8,57 @@
 
     var utils = require('./utilsSrv.js');
 
-     rssPersistenceService.saveRssResource = function(catelog, items) {
+    var httpRequest = require('./httpRequestSrv.js');
+    var htmlParseSrv = require('./htmlParseSrv.js');
 
-         return RssCatelog.getRssCatelogByUrl(catelog.rsslink)
-                          .then(function(data) {
+    function getWebSiteFavorIcon(website) {
+        var iconAddress = website + '/favicon.ico';
 
-                                if(utils.isErrorObject(data)){
+        return httpRequest.request(iconAddress)
+            .then(function(data) {
+                return iconAddress;
+            }, function(error) {
+                return httpRequest.request(website)
+                    .then(function(data) {
+                        return htmlParseSrv.getFavIconSrc(data);
+                    }, function(error) {
+                        return '';
+                    });
+            });
+    }
 
-                                    return data;
-                                }
+    rssPersistenceService.saveRssResource = function(catelog, items) {
 
-                                if (!!data) {
-                                    console.log('getRssCatelogByUrl', 'the resource has existed');
-                                    return saveRssItems(data, items);
-                                }
-                                return saveRssCatelog(catelog, items);
-                            });
+        return RssCatelog.getRssCatelogByUrl(catelog.rsslink)
+            .then(function(data) {
+
+                if (utils.isErrorObject(data)) {
+                    return data;
+                }
+
+                if (!data) {
+                    return getWebSiteFavorIcon(catelog.website)
+                        .then(function(icon) {
+                            catelog.icon = icon;
+                            return saveRssCatelog(catelog, items);
+                        });
+                } else {
+                    return data;
+                }
+                /*if (!!data) {
+                    console.log('getRssCatelogByUrl', 'the resource has existed');
+                    return saveRssItems(data, items);
+                }*/
+                //return saveRssCatelog(catelog, items);
+            });
     };
 
 
-    rssPersistenceService.saveRssItems = function(catelog, items){
+    rssPersistenceService.saveRssItems = function(catelog, items) {
         return saveRssItems(catelog, items);
     };
 
-    rssPersistenceService.removeSelectedRssUserMap = function(userId, catelogIds){
+    rssPersistenceService.removeSelectedRssUserMap = function(userId, catelogIds) {
         return removeSelectedRssUserMap(userId, catelogIds);
     };
 
@@ -46,31 +73,31 @@
             userId: userid,
             catelogId: catelogid
         });
-        
+
         return rssUserMap.save()
-                      .then(function(data){
-                         return data;
-                      }, function(error){
-                            return {
-                                error: error,
-                                message: 'the relation mapping occurs problem'
-                            };
-                      });
+            .then(function(data) {
+                return data;
+            }, function(error) {
+                return {
+                    error: error,
+                    message: 'the relation mapping occurs problem'
+                };
+            });
     }
 
-    function removeSelectedRssUserMap(userId, catelogIds){
+    function removeSelectedRssUserMap(userId, catelogIds) {
 
-        var rssUserMaps = _.map(catelogIds, function(n){
-                                return {
-                                    userId: userId,
-                                    catelogId: n
-                                };
-                            });
-        
+        var rssUserMaps = _.map(catelogIds, function(n) {
+            return {
+                userId: userId,
+                catelogId: n
+            };
+        });
+
         return RssUserMap.removeSeelctedRss(rssUserMaps)
-                         .then(function(data){
-                            return data;
-                          });
+            .then(function(data) {
+                return data;
+            });
     }
 
     function saveRssCatelog(catelog, items) {
@@ -82,22 +109,23 @@
             subtitle: catelog.subtitle,
             author: catelog.author,
             updated: catelog.updated,
+            icon: catelog.icon,
             classify: '',
             tags: ''
         });
 
         return rssCatelog
-               .save()
-               .then(function(catelog) {
+            .save()
+            .then(function(catelog) {
                     return saveRssItems(catelog, items);
                 },
                 function(error) {
-                   
+
                     return {
                         error: error,
                         message: 'save rssCatelog occurs a problem'
                     };
-                   
+
                 });
     }
 
@@ -105,51 +133,51 @@
 
         return filterUpdatedItems(catelog, items)
             .then(function(data) {
-                
-                if(utils.isErrorObject(data)){
+
+                if (utils.isErrorObject(data)) {
                     return data;
                 }
 
                 var updatedItems = data;
-               
+
                 if (!!updatedItems && updatedItems.length) {
-                    
+
                     return RssItem.bulkSaveRssItems(updatedItems)
-                             .then(function(ret){
-                                if(!utils.isErrorObject(ret)){
-                                    return catelog;
-                                }
-                                return ret;
-                             });
-                }else{
+                        .then(function(ret) {
+                            if (!utils.isErrorObject(ret)) {
+                                return catelog;
+                            }
+                            return ret;
+                        });
+                } else {
                     return catelog;
                 }
             });
     }
 
     function filterUpdatedItems(catelog, items) {
-        
+
         return RssItem.getLatestRssItemByCatelogId(catelog._id)
             .then(function(data) {
 
-                if(utils.isErrorObject(data)){
+                if (utils.isErrorObject(data)) {
                     return data;
                 }
 
                 var latestRssItem = data;
                 if (!!latestRssItem) {
                     return _.filter(items, function(n) {
-                                if(n.updated > latestRssItem.updated){
-                                    n.catelogId = catelog._id;
-                                    return n;
-                                }
-                            });
+                        if (n.updated > latestRssItem.updated) {
+                            n.catelogId = catelog._id;
+                            return n;
+                        }
+                    });
                 }
 
                 return _.map(items, function(n) {
-                             n.catelogId = catelog._id;
-                            return n;
-                        });
+                    n.catelogId = catelog._id;
+                    return n;
+                });
             });
     }
 

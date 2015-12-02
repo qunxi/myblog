@@ -10,15 +10,30 @@
     var RssUserMap = require('../models/rssUserMap.js');
     var utils = require('./utilsSrv.js');
 
+    var iconv = require('iconv-lite');
+
     rssRequestService.requestRssResourceFrmNet = function(link) {
 
         return httpRequest.request(link)
             .then(function(data) {
+                
+                var xmlEncoding = /<\?xml[\w\W]*encoding="([\w\W]*)"\?>/gi;
+                var result = xmlEncoding.exec(data.slice(0, 100));
+                
+                if(result && result.length === 2){
+                    var encoding = result[1];
+
+                    var buf= new Buffer(data,'binary');
+                    data = iconv.decode(buf, encoding);
+                }
+                
                 var parser = new FeedMe(true);
                 parser.write(data);
                 return normalizeFeeds(link, parser.done());
             }, function(error) {
-                return error;
+                return {
+                    error: error
+                };
             });
     };
 
@@ -49,8 +64,6 @@
 
         function getPostSource(link){
             var items = link.split('.');
-            console.log(link);
-            console.log(items[0].slice(-3));
             return items[0].slice(-3) === 'www' ? items[1]: items[0].split('/')[2] ;
         }
 
@@ -152,7 +165,7 @@
         if (data.type === 'atom') {
             return generateAtomFeeds(data, selfLink);
         }
-
+       
         return generateRSSFeeds(data, selfLink);
     }
 
@@ -220,7 +233,7 @@
             author: data.author,
             website: data.link,
             rsslink: url,
-            updated: new Date(Date.parse(data.lastBuildDate))
+            updated: new Date(Date.parse(data.lastbuilddate))
         };
 
         var normalizeFeeds = _.chain(data.items)

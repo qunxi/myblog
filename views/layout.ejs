@@ -12,9 +12,10 @@
 		<script src="js/angular/angular.min.js"></script>
 
 		<script src="js/app/app.js"></script>
+		<script src="js/app/authInterceptor.js"></script>
 		<script src="js/app/utils.js"></script>
 		<script src="js/app/directive/directive.js"></script>
-		<script src="js/app/account/account.js"></script>
+		
 	</head>
 	<body>
 		<header class="navbar navbar-inverse" ng-controller="NavHeaderCtrl as vm">
@@ -27,13 +28,15 @@
 	  					<li><a>文章</a></li>
 	  					<li><a>威客</a></li>
 	  					<li><a>培训</a></li>-->
-	  					<!--<li ng-class="{active: vm.path === '/account'}"><a href="/account">程序猿</a></li>-->
+	  					<li ng-class="{active: vm.path === '/account'}"><a href="/account">程序猿</a></li>
 						<li ng-class="{active: vm.path === '/about'}"><a href="/about">关于我</a></li>
 	  				</ul>
-	  				<!--<ul class="nav navbar-nav pull-right">
-	  					<li ng-class="{active: vm.path === '/register'}"><a href="/register">注册</a></li>
-	  					<li ng-class="{active: vm.path === '/login'}"><a href="/login">登录</a></li>
-	  				</ul>-->
+	  				<ul class="nav navbar-nav pull-right">
+	  					<li ng-if="!vm.isAuthenticated" ng-class="{active: vm.path === '/register'}"><a href="/register">注册</a></li>
+	  					<li ng-if="!vm.isAuthenticated" ng-class="{active: vm.path === '/login'}"><a href="/login">登录</a></li>
+	  					<li ng-if="vm.isAuthenticated" ng-class="{active: vm.path === '/#'}"><a href="#">{{vm.username}}</a></li>
+	  					<li ng-if="vm.isAuthenticated" ng-class="{active: vm.path === '/#'}"><a href="#" ng-click="vm.logout()">注销</a></li>
+	  				</ul>
   				</div>
   				<div>
   					
@@ -51,5 +54,6 @@
 				
 			</div>
 		</footer>
+		<%- script %>
 	</body>
 </html>
