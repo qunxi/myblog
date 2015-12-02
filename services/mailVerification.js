@@ -29,7 +29,7 @@
 		var deferred = Q.defer();
 
 		transporter.sendMail({
-		    from: 'helloprogrammer@126.com',
+		    from: 'helloprogrammer@aliyun.com',
 		    to: email, 
 		    subject: '请激活你的帐号',
 		    html: generateMailTemplate(email, getTokenLink(userId))
@@ -105,13 +105,13 @@
 	}
 
 	var config = {
-		host: 'smtp.126.com',
+		/*host: 'smtp.126.com',
 		secure: true,
 		port: 465,
 		auth:{
 			user: 'helloprogrammer@126.com',
-			pass: 'Elekta1985'
-		}
+			pass: '****'
+		}*/
 		//service: '163',
 		/*auth:{
 			user: 'wangqx85@163.com',
@@ -124,14 +124,14 @@
 			user: 'wangqx85@163.com',
 			pass: 'xxxxx'
 		}*/
-		/* aliyun config
+		// aliyun config
 		host: 'smtp.aliyun.com',
 		secure: true,
 		port: 465,
 		auth:{
-			user: 'wangqunxi@aliyun.com',
-			pass: 'xxxxx'
-		}*/
+			user: 'helloprogrammer@aliyun.com',
+			pass: 'Elekta1985'
+		}
 	};
 
 	var transporter = nodemailer.createTransport(smtpTransport(config));
