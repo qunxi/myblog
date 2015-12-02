@@ -29,7 +29,7 @@
 		var deferred = Q.defer();
 
 		transporter.sendMail({
-		    from: 'wangqx85@163.com',
+		    from: 'helloprogrammer@126.com',
 		    to: email, 
 		    subject: '请激活你的帐号',
 		    html: generateMailTemplate(email, getTokenLink(userId))
