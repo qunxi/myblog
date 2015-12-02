@@ -1,8 +1,8 @@
 (function(){
 	angular.module('app', []);
 
-	//angular.module('app').constant('API_URL', 'http://www.wangqunxi.com/api/');
-	angular.module('app').constant('API_URL', 'http://localhost:3000/api/');
+	angular.module('app').constant('API_URL', 'http://www.wangqunxi.com/api/');
+	//angular.module('app').constant('API_URL', 'http://localhost:3000/api/');
 	
 
 	angular.module('app').controller('NavHeaderCtrl', NavHeaderCtrl);
