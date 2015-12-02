@@ -39,16 +39,15 @@
 
         app.get('/verification', function(req, res){
             var token = req.query.email;
-            console.log(token);
+            
             mailVerification.verifyMail(token)
                             .then(function(data){
-                                console.log(data);
                                 if(utils.isErrorObject(data)){
-                                    return res.render('mailVerification', {message: 'verification failed'});
+                                    return res.render('mailVerification', {success: false});
                                 }
-                                return res.render('mailVerification', {message: 'verification success'});
+                                return res.render('mailVerification', {success: true});
                             }, function(error){
-                                return res.render('mailVerification', {message: 'verification failed'});
+                                return res.render('mailVerification', {success: false});
                             });
             
         });

@@ -7,7 +7,8 @@
 	var Q = require('q');
 
 	var SECRET_KEY = 'mailxx';
-	var verificationUrl = 'http://localhost:3000/verification?email=';
+	var verificationUrl = 'http://www.wangqunxi.com/verification?email=';
+	//var verificationUrl = 'http://localhost:3000/verification?email=';
 
 	mailVerification.sendMail = sendMail;
 	mailVerification.verifyMail = verifyMail;
