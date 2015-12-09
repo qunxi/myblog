@@ -2,6 +2,7 @@
 
     var mailVerification = require('../services/mailVerification.js');
     var utils = require('../services/utilsSrv.js');
+    var rssRequest = require('../services/rssRequestSrv.js');
 
     homeController.init = function(app) {
 
@@ -36,6 +37,11 @@
         app.get('/subscribe', function(req, res){
             res.render('account/subscribe', {});
         });
+        app.get('/test', function(req, res){
+            console.log('test');
+            
+            res.render('mailVerification', {success: false});
+        });
 
         app.get('/verification', function(req, res){
             var token = req.query.email;
@@ -50,6 +56,29 @@
                                 return res.render('mailVerification', {success: false});
                             });
             
+        });
+
+        app.get('/post', function(req, res){
+            var id = req.query.id;
+            var src = req.query.src;
+            var userId = req.query.userId;
+            if(!id){
+                /*return utilsSrv.failedResponse(res, {
+                    error: 'post id is empty'
+                });*/
+            }
+
+            return rssRequest.requestRssItemById(id, userId)
+                            .then(function(post){
+                                if(utils.isErrorObject(post)){
+                                    //logger.error('requestRssItemContentByItemId failed when id is ' + id + ' the #error# ' + content);
+                                    //return failedResponse(res, post);
+                                }
+                                post.src = src;
+                                post.date = utils.formatDate(post.updated);
+                                
+                                return res.render('post', {post: post});
+                            });
         });
     };
 

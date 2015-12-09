@@ -3,14 +3,16 @@
 
     var _ = require('lodash');
     var FeedMe = require('feedme');
+    var iconv = require('iconv-lite');
 
     var httpRequest = require('./httpRequestSrv');
     var RssCatelog = require('../models/rssCatelog.js');
     var RssItem = require('../models/rssItem.js');
     var RssUserMap = require('../models/rssUserMap.js');
     var utils = require('./utilsSrv.js');
-
-    var iconv = require('iconv-lite');
+    var PostComment = require('../models/postComment.js');
+    var PostFavorite = require('../models/postFavorite.js');
+    
 
     rssRequestService.requestRssResourceFrmNet = function(link) {
 
@@ -59,12 +61,56 @@
         return getRssPosts(page, limit);
     };
 
+    rssRequestService.requestRssItemById = function(postId, userId){
+        return getRssItemById(postId, userId);
+    };
+
+    rssRequestService.getPostCommentsById = function(id){
+        return getPostCommentsById(id);
+    };
+
     //private section
+    function getRssItemById(postId, userId){
+        return RssItem.getRssItemById(postId)
+                      .then(function(post){
+                            if(utils.isErrorObject(post)){
+                                return post;
+                            }
+                            return PostFavorite.isFavoriteExist(userId, postId)
+                                        .then(function(data){
+                                            if(!data || utils.isErrorObject(data)){
+                                                post.favor = true;
+                                                return post;
+                                            }
+                                            post.favor = false;
+                                            return post;
+                                        });
+                      });
+    }
+
+    function getPostCommentsById(id){
+        return  PostComment.getPostCommentsById(id);
+                         /*.then(function(data){
+                            if(utils.isErrorObject(data)){
+                                return data;
+                            }
+
+                         });*/
+    }
+
     function getRssPosts(page, limit){
 
         function getPostSource(link){
             var items = link.split('.');
-            return items[0].slice(-3) === 'www' ? items[1]: items[0].split('/')[2] ;
+            var reg = /(http|https):\/\/([\w\W]+)\//ig;
+            var result = reg.exec(link);
+            if(result.length === 3){
+                var temp = result[2].split('.');
+                if(temp.length >= 2){
+                   return temp[temp.length - 2];
+                }
+            }
+            return link;
         }
 
         return RssItem.getLatestRssItems(page, limit)

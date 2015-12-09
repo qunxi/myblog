@@ -1,0 +1,41 @@
+<div ng-controller="PostCtrl as vm" >
+<div class="entry">
+	<div class="entry-head">
+		<h3>
+			<%= post.title %>
+		</h3>
+		<div class="entry-property">
+			<sapn><%= post.date %></span>
+			<span><a href="<%= post.link %>"><%= post.src %></a></span>
+		</div>
+	</div>
+	<div class="entry-body">
+		<%- post.content %>
+	</div>
+	<div>
+		<input type="hidden" id="postId" value="<%= post._id %>"/>
+		<button class="btn btn-danger" ng-click="vm.thumbUp()"><i class="glyphicon glyphicon-thumbs-up"></i>赞<%= post.thumbUp%></button>
+		<button class="btn btn-warning" ng-click="vm.addAsFavorite()"><i ng-init="vm.isYourFavorite = <%= post.favor %>" ng-class="{false: 'glyphicon glyphicon-heart-empty', true: 'glyphicon glyphicon-heart'}[vm.isYourFavorite]"></i>收藏</button>
+		<button class="btn btn-primary" ng-if="!vm.isAuthenticated" ng-click="vm.submitComment()"><i class="glyphicon glyphicon-comment"></i>点评</button>
+	</div>
+</div>
+
+<div class="comments-list">
+	<h5 style="font-weight: bolder; color: #000">发表评论</h5>
+	<div class="form-group" ng-if="vm.isAuthenticated">
+    	<textArea placeholder="说两句呗(6-250),KISS(Kepp It Simple Stupid)" ng-model="vm.comment" class="form-control padding"></textArea>
+		<button class="btn btn-primary" style="margin:10px 0" ng-click="vm.submitComment()" ng-disabled="vm.disableComment">{{vm.commentLabel}}</button>
+	</div>
+	<h5 class="title">最新评论</h5>
+	<div ng-repeat="comment in vm.commentsList" class="comment">
+		<div class="comment-prop">
+			<span class="user"><i class="glyphicon glyphicon-user"></i>{{comment.user}}</span>
+			<span class="pull-right">{{comment.date}}</span>
+		</div>
+		<div class="message">
+			<span>{{comment.comment}}</span>
+		</div>
+	</div>
+</div>
+</div>
+<script src="js/app/post/post.js"></script>

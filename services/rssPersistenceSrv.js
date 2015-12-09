@@ -5,6 +5,8 @@
     var RssItem = require('../models/rssItem.js');
     var User = require('../models/user.js');
     var RssUserMap = require('../models/rssUserMap.js');
+    var PostComment = require('../models/postComment.js');
+    var PostFavorite = require('../models/postFavorite.js');
 
     var utils = require('./utilsSrv.js');
 
@@ -53,6 +55,9 @@
             });
     };
 
+    rssPersistenceService.addCommentForPost = function(postId, userId, comment, username){
+        return addCommentForPost(postId, userId, comment, username);
+    };
 
     rssPersistenceService.saveRssItems = function(catelog, items) {
         return saveRssItems(catelog, items);
@@ -67,6 +72,9 @@
         return updateUserCatelogList(userId, catelogId);
     };
 
+    rssPersistenceService.addFavorForPost = function(postId, userId) {
+        return addFavorForPost(postId, userId);
+    };
 
     function updateUserCatelogList(userid, catelogid) {
         var rssUserMap = new RssUserMap({
@@ -98,6 +106,76 @@
             .then(function(data) {
                 return data;
             });
+    }
+
+    function addCommentForPost(postId, userId, comment, username) {
+        var postComment = new PostComment({
+            userId: userId,
+            postId: postId,
+            date: new Date(),
+            user: username,
+            comment: comment
+        });
+
+        return PostComment.isCommentExist(userId, postId, comment)
+            .then(function(data) {
+                if (utils.isErrorObject(data)) {
+                    return data;
+                }
+                return postComment.save()
+                    .then(function(data) {
+                        return data;
+                    }, function(error) {
+                        return error;
+                    });
+            });
+    }
+
+
+    function addFavorForPost(postId, userId) {
+        var postFavorite = new PostFavorite({
+            userId: userId,
+            postId: postId
+        });
+        return PostFavorite.isFavoriteExist(userId, postId)
+            .then(function(data) {
+                if (utils.isErrorObject(data)) {
+                    return data;
+                }
+                if(!data){
+                    return postFavorite.save()
+                        .then(function(data) {
+                            return data;
+                        }, function(error) {
+                            return {
+                                error: 'add favorite failed'
+                            };
+                        });
+                }
+                else{
+                    console.log(data);
+                    return data.remove();
+                }
+            });
+    }
+
+    function  addThumbUpForPost(postId){
+        return RssItem.getRssItemById(id)
+                   .then(function(data){
+                       if(utilsSrv.isErrorObject(data)){
+                            return data;
+                       }
+
+                      data.thumbUp++;
+                      return  data.save()
+                              .then(function(data){
+                                return data;
+                              }, function(error){
+                                return {
+                                    error: 'update thumbup failed'
+                                };
+                              });
+                   });
     }
 
     function saveRssCatelog(catelog, items) {

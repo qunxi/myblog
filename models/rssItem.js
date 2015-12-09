@@ -11,6 +11,7 @@
         content: String,
         description: String,
         images: Array,
+        thumbUp: Number,
         catelogId: Types.ObjectId
     });
 
@@ -72,31 +73,37 @@
                     });
     };
 
+    RssItemSchema.statics.getRssItemById = function(id){
+       return this.findOne({'_id': id})
+                  .then(function(data){
+                        return data;
+                  }, function(error){
+                      return {
+                              message : 'data base query occur a problem when you query content of item(' + id + ')',
+                              error: error
+                          };
+                  });
+    };
+
+
     RssItemSchema.statics.getRssItemContentById = function(id){
-        return this.findOne({'_id': id})
-                   //.select('content')
-                   .then(function(data){
-                      
-                      if(!!data){
-                         if(!data.content){
-                            if(!!data.description){
-                                return data.description;
-                            }
-                            return {
-                                hasContent: false,
-                                link: data.link,
-                                updated: data.updated,
-                            };
-                         }
-                         return data.content;
-                      }
-                      return data;
-                   }, function(error){
-                        return {
-                            message : 'data base query occur a problem when you query content of item(' + id + ')',
-                            error: error
-                        };
-                   });
+        return this.getRssItemById(id)
+                .then(function(data) {
+                    if (!!data) {
+                        if (!data.content) {
+                          if (!!data.description) {
+                              return data.description;
+                          }
+                          return {
+                              hasContent: false,
+                              link: data.link,
+                              updated: data.updated,
+                          };
+                    }
+                    return data.content;
+                }
+                return data;
+            });
     };
 
     RssItemSchema.statics.getRssItemsByCatelogId = function(catelogId, page, limit) {

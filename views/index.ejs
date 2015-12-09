@@ -1,4 +1,4 @@
-<div class="post-list" ng-controller="PostCtrl as vm">
+<div class="post-list" ng-controller="PostCtrl as vm" ng-init="vm.initPosts()">
 <div class="row">
 	<div ng-if="!vm.loaded" style="text-align:center">
 		<img src="images/loading.gif"  width=30px height=30px/>
@@ -8,7 +8,7 @@
 		<div class="post">
 			<div class="entry-header">
 				<div class="post-title">
-					<a ng-href="{{post.link}}" target="_blank">{{post.title}}</a>
+					<a ng-href="{{post.postLink}}" target="_blank">{{post.title}}</a>
 				</div>
 				<div class="post-property">
 					<sapn>{{post.updated}} | </sapn>
@@ -16,7 +16,7 @@
 				</div>
 			</div>
 			<div class="entry-body">
-				<a ng-href="{{post.link}}" target="_blank">
+				<a ng-href="{{post.postLink}}" target="_blank">
 					<img ng-if="post.images.length !== 0" src="{{post.images[0]}}"/>
 					<div class="image-holder" ng-if="post.images.length === 0">无图更精彩</div>
 				</a>
@@ -33,3 +33,5 @@
 	</div>
 </div>
 </div>
+
+<script src="js/app/post/post.js"></script>
