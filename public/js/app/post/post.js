@@ -135,7 +135,6 @@ function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
                     vm.totalSize = data.count / itemsOfPerPage;
                     vm.loaded = true;
                 }
-                console.log(vm.posts);
             });
     }
 

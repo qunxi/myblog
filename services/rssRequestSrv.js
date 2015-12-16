@@ -18,7 +18,6 @@
 
         return httpRequest.request(link)
             .then(function(data) {
-                
                 var xmlEncoding = /<\?xml[\w\W]*encoding="([\w\W]*)"\?>/gi;
                 var result = xmlEncoding.exec(data.slice(0, 100));
                 
@@ -73,16 +72,16 @@
     function getRssItemById(postId, userId){
         return RssItem.getRssItemById(postId)
                       .then(function(post){
-                            if(utils.isErrorObject(post)){
+                            if(!post || utils.isErrorObject(post)){
                                 return post;
                             }
                             return PostFavorite.isFavoriteExist(userId, postId)
                                         .then(function(data){
                                             if(!data || utils.isErrorObject(data)){
-                                                post.favor = true;
+                                                post.favor = false;
                                                 return post;
                                             }
-                                            post.favor = false;
+                                            post.favor = true;
                                             return post;
                                         });
                       });

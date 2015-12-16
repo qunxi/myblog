@@ -25,7 +25,6 @@
 
             rssRequest.requestRssResourceFrmNet(link)
                       .then(function(data){
-                         
                           if(utils.isErrorObject(data)){
                             logger.error(link + 'at requestRssResourceFrmNet happened an error #error# ' + data);
                             return  failedResponse(res, data);
@@ -128,7 +127,6 @@
             var id = req.query.itemId;
             
             if(!!id){
-                console.log(id);
                 return rssRequest.requestRssItemContentByItemId(id)
                             .then(function(content){
                                 if(utils.isErrorObject(content)){

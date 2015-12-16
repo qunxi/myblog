@@ -6,6 +6,7 @@
     var rssCtrl = require('./rssController.js');
     var contractCtrl = require('./contractController.js');
     var jobCtrl = require('./jobController.js');
+    var bookCtrl = require('./bookController.js');
 
     apicontrollers.init = function (app) {
         userCtrl.init(app);
@@ -13,6 +14,7 @@
         stockCtrl.init(app);
         rssCtrl.init(app);
         jobCtrl.init(app);
+        bookCtrl.init(app);
         contractCtrl.init(app);
     };   
 

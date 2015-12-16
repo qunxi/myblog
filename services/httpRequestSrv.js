@@ -14,14 +14,14 @@
             method: 'GET',
             host: parseUrl.hostname,
             path: parseUrl.path + (!!params ? '?' + query : ''),
-            port: parseUrl.port
-
+            port: parseUrl.port,
+            headers:{
+                'User-Agent': 'codemonkey'
+            }
         };
-
 
         var deferred = Q.defer();
         var req = http.request(opt, function(res) {
-
             var result = '';
             res.setEncoding('binary');
 

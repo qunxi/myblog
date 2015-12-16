@@ -9,6 +9,15 @@
         return !!obj && obj.hasOwnProperty('warning');
     };
 
+
+    UtilsService.httpResponse = function(res, data){
+        if(!data || !data.status){
+            return res.status(500).send('the server did not get any response');
+        }
+        
+        return res.status(data.status).send(data.data);
+    };
+
     UtilsService.failedResponse = function(res, data) {
         return res.status(500).send({
             error: data

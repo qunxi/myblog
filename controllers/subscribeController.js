@@ -7,11 +7,9 @@
     var Q = require('q');
 
     subscribeController.init = function(app) {
-
         var logger = app.get('appLogger');
 
         app.post('/api/subscribe', function(req, res) {
-
             var link = req.body.link;
 
             if (!link) {
@@ -21,7 +19,8 @@
                 });
             }
 
-            return authSrv.verifyToken(req)
+            var token = authSrv.getTokenFrmHttpRequest(req);
+            return authSrv.verifyToken(token)
                     .then(function(user) {
                         subscribe(link, user)
                             .then(function(catelog){
@@ -73,7 +72,8 @@
             var page = req.query.page;
             var limit = req.query.limit;
             if (!!limit) {
-                return authSrv.verifyToken(req)
+                var token = authSrv.getTokenFrmHttpRequest(req);
+                return authSrv.verifyToken(token)
                         .then(function(user) {
                             if (!!user._id) {
                             return  getRssResource(user._id, page, limit)
@@ -116,8 +116,8 @@
                     error: 'you dont selected any catelogs'
                 });
             }
-
-            return authSrv.verifyToken(req)
+            var token = authSrv.getTokenFrmHttpRequest(req);
+            return authSrv.verifyToken(token)
                 .then(function(user) {
                         return removeSelectedRssUserMap(user._id, catelogIds)
                             .then(function(data) {
@@ -133,7 +133,8 @@
 
         app.post('/api/post/favorite', function(req, res){
             var postId = req.body.postId;
-            return authSrv.verifyToken(req)
+            var token = authSrv.getTokenFrmHttpRequest(req);
+            return authSrv.verifyToken(token)
                         .then(function(user) {
                             return addFavorForPost(postId, user._id)
                                     .then(function(data){
@@ -161,8 +162,8 @@
         app.post('/api/post/comment', function(req, res) {
             var postId = req.body.postId;
             var comment = req.body.comment;
-
-            return authSrv.verifyToken(req)
+            var token = authSrv.getTokenFrmHttpRequest(req);
+            return authSrv.verifyToken(token)
                 .then(function(user) {
                     var username = user.username ? user.username : user.email.split('@')[0];
                     return addCommentForPost(postId, user._id, comment, username)

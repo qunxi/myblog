@@ -405,3 +405,56 @@ a:hover{
 button i{
     padding: 0 5px 0 0;
 }
+
+.book{
+    margin-bottom: 30px;
+    height: 215px;
+}
+.book img{
+    float: left;
+    /*width: 120px;*/
+    max-width: 130px;
+    width: 35%;
+    height: 170px;
+    /*margin: 0 10px;*/
+}
+
+.book .desc{
+    float: left;
+    padding: 0 5px;
+    width: 65%;
+}
+
+.book h4{
+    font-weight: bold;
+    /*max-width: 120px;*/
+    word-wrap: break-word;
+    color: #333;
+    margin: 5px 0;
+}
+.book .desc div{
+    padding: 3px 0;
+    word-wrap: break-word;
+}
+.book .desc .author, .book .desc .publish,
+.book .desc .origin, .book .desc .trans{
+    padding: 5px;
+    color: #000;
+}
+
+.book .link{
+    margin: 5px 10px 5px 0;
+}
+
+.book-submit{
+    border-top: 1px dotted #333; 
+    margin: 20px;
+}
+
+
+
+
+
+
+
+
