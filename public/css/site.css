@@ -57,6 +57,7 @@ a:hover{
     color: #111;
     margin: 2px 0;
     word-wrap: break-word;
+    max-width: 400px;
 }
 
 
@@ -67,6 +68,7 @@ a:hover{
     line-height: 20px;
     color: #bbb;
     font-size: 12px;
+    max-width: 400px;
 }
 
 .post-property .source{

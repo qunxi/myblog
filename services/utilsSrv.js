@@ -9,6 +9,16 @@
         return !!obj && obj.hasOwnProperty('warning');
     };
 
+    UtilsService.webErrorRender = function(res, data){
+        switch(data.status){
+            case 404:
+            case 401:
+                return res.render('404');
+            case 500:
+                return res.render('500');
+        }
+        return res.render('500');
+    };
 
     UtilsService.httpResponse = function(res, data){
         if(!data || !data.status){

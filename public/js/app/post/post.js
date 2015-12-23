@@ -7,7 +7,8 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
         getPostsByDate: getPostsByDate,
         addPostComment: addPostComment,
         getPostComments: getPostComments,
-        addAsFavorite: addAsFavorite
+        addAsFavorite: addAsFavorite,
+        formatPosts: formatPosts
     };
 
     return service;
@@ -115,27 +116,22 @@ function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
     vm.submitComment = submitComment;
     vm.addAsFavorite = addAsFavorite;
     vm.showMorePosts = showMorePosts;
+    vm.initPosts = initPosts;
 
     var itemsOfPerPage = 12;
 
     if(utilsService.getLocationPath() === '/'){
-        initPosts();
+        //initPosts();
     }
     else{
         getPostComments();
     }
 
-    function initPosts() {
-        postService.getPostsByDate(0, itemsOfPerPage)
-            .then(function(data) {
-                if (utilsService.isErrorObject(data)) {
-                    vm.loaded = false;
-                } else {
-                    vm.posts = data.items;
-                    vm.totalSize = data.count / itemsOfPerPage;
-                    vm.loaded = true;
-                }
-            });
+    function initPosts(items, count) {
+         vm.posts = postService.formatPosts(items);
+         vm.totalSize = count / itemsOfPerPage + (count % itemsOfPerPage === 0 ? 0 : 1);
+         console.log(count, vm.totalSize);
+         vm.loaded = true;
     }
 
     function getPostComments(){

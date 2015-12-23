@@ -1,4 +1,4 @@
-<div class="post-list" ng-controller="PostCtrl as vm" ng-init="vm.initPosts()">
+<div class="post-list" ng-controller="PostCtrl as vm" ng-init="vm.initPosts(<%= posts %>, <%= count %>)">
 <div class="row">
 	<div ng-if="!vm.loaded" style="text-align:center">
 		<img src="images/loading.gif"  width=30px height=30px/>

@@ -7,9 +7,9 @@
 
     homeController.init = function(app) {
 
-        app.get('/', function(req, res) {
+        /*app.get('/', function(req, res) {
             res.render('index');
-        });
+        });*/
 
         /*app.get('/index', function(req, res) {
             res.render('index');
@@ -64,35 +64,10 @@
             var limit = req.query.limit;
             bookService.getBooksList(page, limit)
                        .then(function(data){
-                            console.log(data.data);
                             return res.render('book', {books: JSON.stringify(data.data.books), count: data.data.count});
                        }, function(error){
                             return res.render('500', error);
                        });
-        });
-
-        app.get('/post', function(req, res){
-            var id = req.query.id;
-            var src = req.query.src;
-            var userId = req.query.userId;
-            if(!id){
-                /*return utilsSrv.failedResponse(res, {
-                    error: 'post id is empty'
-                });*/
-            }
-
-            return rssRequest.requestRssItemById(id, userId)
-                            .then(function(post){
-                                if(!post || utils.isErrorObject(post)){
-                                    //logger.error('requestRssItemContentByItemId failed when id is ' + id + ' the #error# ' + content);
-                                    //return failedResponse(res, post);
-                                    return res.render('404');
-                                }
-                                post.src = src;
-                                post.date = utils.formatDate(post.updated);
-                                
-                                return res.render('post', {post: post});
-                            });
         });
     };
 
