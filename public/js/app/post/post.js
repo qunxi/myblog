@@ -82,7 +82,7 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
     function formatPosts(posts) {
         return _.map(posts, function(post) {
         	post.updated = utilsService.formatDate(post.updated);
-            post.description = $sce.trustAsHtml(post.description, 150);
+            post.description = $sce.trustAsHtml(post.description, 100);
             var user = authToken.getCurrentUser();
             if(!user){
                 post.postLink = '/post?id=' + post._id + '&src=' + post.source;

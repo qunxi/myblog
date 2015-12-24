@@ -121,7 +121,7 @@
                                 if(!n.description){
                                     n.description = n.content;
                                 }
-                                n.description = utils.cutString(n.description, 150);
+                                n.description = utils.cutString(n.description, 100);
                                 var item = {
                                     _id: n._id,
                                     catelog: n.catelogId,
@@ -317,12 +317,12 @@
             format = utils.formatImageUrl(content, link);
             content = format.content;
             images = format.images;
-            description = utils.cutString(content, 150);
+            description = utils.cutString(content, 100);
         } else if (!!description && !!link) {
             format = utils.formatImageUrl(description, link);
             images = format.images;
             content = format.content;
-            description = utils.cutString(content, 150);
+            description = utils.cutString(content, 100);
         }
 
         return {

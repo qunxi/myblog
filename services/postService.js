@@ -101,7 +101,7 @@
                     if (!n.description) {
                         n.description = n.content;
                     }
-                    n.description = utils.cutString(n.description, 150);
+                    n.description = utils.cutString(n.description, 100);
                     var item = {
                         _id: n._id,
                         catelog: n.catelogId,
