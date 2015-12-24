@@ -112,7 +112,7 @@ a:hover{
     overflow:hidden;
     text-overflow:ellipsis;
     
-    min-height: 45px;
+    height: 60px;
 }
 
 .post-share{
