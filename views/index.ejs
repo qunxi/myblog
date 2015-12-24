@@ -8,11 +8,11 @@
 		<div class="post">
 			<div class="entry-header">
 				<div class="post-title">
-					<a ng-href="{{post.postLink}}" target="_blank">{{post.title}}</a>
+					<a ng-href="{{post.postLink}}" target="_blank" ng-bind="post.title"></a>
 				</div>
 				<div class="post-property">
-					<sapn>{{post.updated}} | </sapn>
-					<span>published: </span><a href="#" target="_blank"><span class="source">{{post.source}}</span></a>	
+					<sapn ng-bind="post.updated"></sapn>
+					<span>published: </span><a href="#" target="_blank"><span class="source" ng-bind="post.source"></span></a>	
 				</div>
 			</div>
 			<div class="entry-body">

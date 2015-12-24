@@ -1,4 +1,5 @@
 <div ng-controller="BookCtrl as vm">
+	<div class="book-tip">21天可以养成一个习惯，但是绝对不能精通一门技术，我们不推崇速成，只推荐经典</div>
 	<div class="row" ng-init="vm.initBookList(<%= books %>, <%= count %>)">
 		<div class="col-md-4 col-xs-12 book" ng-repeat="book in vm.books">
 			<img ng-src="{{book.imageUrl}}" alt="{{book.name}}">
@@ -28,6 +29,9 @@
 			<input type="text"  class="form-control" ng-model="vm.newBook.downloadLink" placeholder="电子书下载地址"/>
 			<button class="btn btn-primary" ng-click="vm.submitBook()">提交</button>
 		</div>
+	</div>
+	<div>
+		<pagination page-size='5' total-size='vm.pageCount' current-page="1" page-change="vm.getBookList(currentPage)"></pagination>
 	</div>
 </div>
 

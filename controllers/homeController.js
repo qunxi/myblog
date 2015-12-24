@@ -60,8 +60,10 @@
         });
 
         app.get('/book', function(req, res){
-            var page = req.query.page;
-            var limit = req.query.limit;
+            //var page = req.query.page;
+            //var limit = req.query.limit;
+            var page = 0;
+            var limit = 9;
             bookService.getBooksList(page, limit)
                        .then(function(data){
                             return res.render('book', {books: JSON.stringify(data.data.books), count: data.data.count});

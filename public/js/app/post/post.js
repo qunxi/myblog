@@ -82,7 +82,7 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
     function formatPosts(posts) {
         return _.map(posts, function(post) {
         	post.updated = utilsService.formatDate(post.updated);
-            post.description = $sce.trustAsHtml(post.description, 50);
+            post.description = $sce.trustAsHtml(post.description, 150);
             var user = authToken.getCurrentUser();
             if(!user){
                 post.postLink = '/post?id=' + post._id + '&src=' + post.source;
@@ -130,7 +130,6 @@ function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
     function initPosts(items, count) {
          vm.posts = postService.formatPosts(items);
          vm.totalSize = count / itemsOfPerPage + (count % itemsOfPerPage === 0 ? 0 : 1);
-         console.log(count, vm.totalSize);
          vm.loaded = true;
     }
 

@@ -121,7 +121,7 @@
                                 if(!n.description){
                                     n.description = n.content;
                                 }
-                                n.description = utils.cutString(n.description, 50);
+                                n.description = utils.cutString(n.description, 150);
                                 var item = {
                                     _id: n._id,
                                     catelog: n.catelogId,
@@ -243,11 +243,9 @@
         var normalizeFeeds = _.chain(data.items)
             .map(function(item) {
                 var rssContent = getItemContent(item);
-                
                 var description = item.summary;
                 var updated = item.published || item.updated;
                 var link = item.link instanceof Array && !!item.link.length ? item.link[0].href :item.link.href;
-                
                 var formated = formatContentAndDescription(rssContent, description, rssCatelog.website);
                 return {
                     title: item.title,
@@ -268,6 +266,11 @@
 
     function getItemContent(item){
         var rssContent = item.content || item['content:encoded'];
+        
+        if(!rssContent){
+            return '';
+        }
+
         return rssContent.text || rssContent;
     }
 
@@ -286,14 +289,8 @@
             	var rssContent = getItemContent(item);
                 var description = item.description;
                 var updated = item.pubdate || item.published;
-
-                /*if(!rssCatelog.website){
-                    var index = item.link.indexOf('/', 7);
-                    rssCatelog.website = item.link.substr(0, index + 1);
-                }*/
-
                 var formated = formatContentAndDescription(rssContent, description, rssCatelog.website);
-                
+
                 return {
                     title: item.title,
                     link: item.link,
@@ -317,15 +314,15 @@
      
         var format;
         if (!!content && !!link) {
-           
             format = utils.formatImageUrl(content, link);
             content = format.content;
             images = format.images;
+            description = utils.cutString(content, 150);
         } else if (!!description && !!link) {
-           
             format = utils.formatImageUrl(description, link);
             images = format.images;
-            description = format.content;
+            content = format.content;
+            description = utils.cutString(content, 150);
         }
 
         return {

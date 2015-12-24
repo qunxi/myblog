@@ -62,17 +62,16 @@ function BookCtrl(bookService, utilsService){
     vm.books = [];
     vm.pageCount = 0;
 
-    //getBookList();
+    var countOfPerPage = 9;
 
-    function initBookList(books, pageCount){
+    function initBookList(books, count){
         vm.books = books;
-        vm.pageCount = pageCount;
+        vm.pageCount = count / countOfPerPage + (count % countOfPerPage === 0 ? 0 : 1);
     }
 
-    function getBookList(){
-        var page = vm.currentPage;
-        var limit = 12;
-        return bookService.getBookList(page, limit)
+    function getBookList(page){
+        var limit = countOfPerPage;
+        return bookService.getBookList(page - 1, limit)
                   .then(function(data){
                         if(utilsService.isErrorObject(data)){
                             console.log(data);
@@ -81,7 +80,6 @@ function BookCtrl(bookService, utilsService){
 
                         vm.books = data.books;
                         vm.pageCount = data.count;
-                        console.log(vm.books);
                   });
     }
 
@@ -96,7 +94,6 @@ function BookCtrl(bookService, utilsService){
             buyLink: vm.newBook.buyLink,
             imageUrl: vm.newBook.imageUrl
         };
-        //console.log(book);
         bookService.submitBook(book)
                    .then(function(data){
                         if(utilsService.isErrorObject(data)){
