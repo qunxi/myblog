@@ -8,11 +8,11 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
         addPostComment: addPostComment,
         getPostComments: getPostComments,
         addAsFavorite: addAsFavorite,
+        thumbUpForPost: thumbUpForPost,
         formatPosts: formatPosts
     };
 
     return service;
-
 
     function addAsFavorite(postId){
         var url = API_URL + 'post/favorite';
@@ -27,7 +27,6 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
     }
 
     function addPostComment(postId, comment){
-
     	var url = API_URL + 'post/comment';
     	return $http.post(url, {postId: postId, comment: comment})
 	    		.then(function(res){
@@ -39,6 +38,18 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
 	    		});
     }
 
+    function thumbUpForPost(postId){
+        var url = API_URL + 'post/thumbup';
+        return $http.post(url, {postId: postId})
+                    .then(function(res){
+                        return res.data;
+                    }, function(res){
+                        return {
+                            error: res.data.error
+                        };
+                    });
+    }
+
     function getPostComments(postId){
     	var url = API_URL + 'post/comment';
         return $http.get(url, {
@@ -47,7 +58,6 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
             }
         })
         .then(function(res){
-            //console.log(res.data);
             return formatComments(res.data);
         }, function(res){
             return [];
@@ -61,8 +71,7 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
                     page: page,
                     limit: limit
                 }
-            })
-            .then(function(res) {
+            }).then(function(res) {
                     res.data.items = formatPosts(res.data.items);
                     return res.data;
                 },
@@ -98,9 +107,9 @@ function postService($http, $sce, API_URL, utilsService, authToken) {
 
 
 angular.module('app').controller('PostCtrl', PostCtrl);
-PostCtrl.$inject = ['$timeout', '$interval', 'postService', 'utilsService', 'authToken'];
+PostCtrl.$inject = ['$window', '$timeout', '$interval', 'postService', 'utilsService', 'authToken'];
 
-function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
+function PostCtrl($window, $timeout, $interval, postService, utilsService, authToken) {
     var vm = this;
 
     vm.posts = [];
@@ -111,12 +120,15 @@ function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
     vm.commentsList = [];
     vm.commentLabel = '评论';
     vm.isYourFavorite = false;
-    
-    vm.thumbUp = thumbUp;
+    vm.thumbUp = 0;
+    vm.isDisableThumbUp = false;
+
+    vm.markThumbUp = thumbUp;
     vm.submitComment = submitComment;
     vm.addAsFavorite = addAsFavorite;
     vm.showMorePosts = showMorePosts;
     vm.initPosts = initPosts;
+    
 
     var itemsOfPerPage = 12;
 
@@ -125,12 +137,28 @@ function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
     }
     else{
         getPostComments();
+        vm.isDisableThumbUp = isMarkedThumbUp();
     }
 
     function initPosts(items, count) {
          vm.posts = postService.formatPosts(items);
          vm.totalSize = count / itemsOfPerPage + (count % itemsOfPerPage === 0 ? 0 : 1);
          vm.loaded = true;
+    }
+
+    function isMarkedThumbUp() {
+        var postsList = angular.fromJson($window.localStorage.getItem('thumbUpPosts'));
+        var postId = document.getElementById('postId').value;
+        var isFinded = false;
+        if (!!postsList) {
+            for (i = 0; i < postsList.length; ++i) {
+                if (postsList[i] === postId) {
+                    isFinded = true;
+                    break;
+                }
+            }
+        }
+        return isFinded;
     }
 
     function getPostComments(){
@@ -142,17 +170,37 @@ function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
     }
 
     function thumbUp(){
+        var postId = document.getElementById('postId').value;
+        if(!postId){
+            return;
+        }
+        
+        postService.thumbUpForPost(postId)
+                   .then(function(data){
+                        var postsList = angular.fromJson($window.localStorage.getItem('thumbUpPosts'));
+                        
+                        if(!postsList){
+                            postsList = [];
+                        }
 
+                        if(!isMarkedThumbUp()){
+                            postsList.push(postId);
+                        }
+                        
+                        $window.localStorage.setItem('thumbUpPosts', angular.toJson(postsList));
+                        vm.thumbUp++;
+                        vm.isDisableThumbUp = true;
+                   }, function(error){
+
+                   });
     }
 
     function addAsFavorite(){
-
         if(!vm.isAuthenticated){
             utilsService.redirectUrl('/login');
         }
 
         var postId = document.getElementById('postId').value;
-
         if(!postId){
             return;
         }
@@ -160,10 +208,9 @@ function PostCtrl($timeout, $interval, postService, utilsService, authToken) {
         postService.addAsFavorite(postId)
                    .then(function(data){
                         if(utilsService.isErrorObject(data)){
-                            //vm.isYourFavorite = true;
                             return data;
                         }
-                        vm.isYourFavorite = !vm.isYourFavorite;
+                        vm.isYourFavorite = !vm.isYourFavorite;  
                         return data;
                    });
     }

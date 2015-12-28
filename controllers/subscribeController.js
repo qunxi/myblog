@@ -4,6 +4,7 @@
     var utilsSrv = require('../services/utilsSrv.js');
     var rssPersistence = require('../services/rssPersistenceSrv.js');
     var rssRequest = require('../services/rssRequestSrv.js');
+    var postSrv = require('../services/postService.js');
     var Q = require('q');
 
     subscribeController.init = function(app) {
@@ -21,48 +22,48 @@
 
             var token = authSrv.getTokenFrmHttpRequest(req);
             return authSrv.verifyToken(token)
-                    .then(function(user) {
-                        subscribe(link, user)
-                            .then(function(catelog){
-                                if(utilsSrv.isErrorObject(catelog)){
-                                    return utilsSrv.failedResponse(res, catelog);
-                                }
-                                return utilsSrv.successResponse(res, catelog);
-                            });
-                    }, function(error) {
-                        return utilsSrv.authenticateFailed(res, error);
-                    });
+                .then(function(user) {
+                    subscribe(link, user)
+                        .then(function(catelog) {
+                            if (utilsSrv.isErrorObject(catelog)) {
+                                return utilsSrv.failedResponse(res, catelog);
+                            }
+                            return utilsSrv.successResponse(res, catelog);
+                        });
+                }, function(error) {
+                    return utilsSrv.authenticateFailed(res, error);
+                });
         });
 
-        app.get('/api/itemContent', function(req, res){
+        app.get('/api/itemContent', function(req, res) {
             var id = req.query.id;
-            if(!id){
+            if (!id) {
                 return utilsSrv.failedResponse(res, {
                     error: 'post id is empty'
                 });
             }
 
-            return  getRssContent(id, res)
-                    .then(function(content) {
-                        if (utilsSrv.isErrorObject(content)) {
-                            return utilsSrv.failedResponse(res, content);
-                        }
-                        return utilsSrv.successResponse(res, content);
-                    });
+            return getRssContent(id, res)
+                .then(function(content) {
+                    if (utilsSrv.isErrorObject(content)) {
+                        return utilsSrv.failedResponse(res, content);
+                    }
+                    return utilsSrv.successResponse(res, content);
+                });
         });
 
-        app.get('/api/rssItem', function(req, res){
+        app.get('/api/rssItem', function(req, res) {
             var id = req.query.id;
             var src = req.query.src;
-            if(!id){
+            if (!id) {
                 return utilsSrv.failedResponse(res, {
                     error: 'rss item id is empty'
                 });
             }
 
-            return getRssItem(id).then(function(data){
-                if(utilsSrv.isErrorObject(data)){
-                    return utilsSrv.failedResponse(res, data); 
+            return getRssItem(id).then(function(data) {
+                if (utilsSrv.isErrorObject(data)) {
+                    return utilsSrv.failedResponse(res, data);
                 }
                 return utilsSrv.successResponse(res, data);
             });
@@ -74,19 +75,19 @@
             if (!!limit) {
                 var token = authSrv.getTokenFrmHttpRequest(req);
                 return authSrv.verifyToken(token)
-                        .then(function(user) {
-                            if (!!user._id) {
-                            return  getRssResource(user._id, page, limit)
-                                        .then(function(rssResource){
-                                            if(utilsSrv.isErrorObject(rssResource)){
-                                                return utilsSrv.failedResponse(res, rssResource);
-                                            }
-                                            return utilsSrv.successResponse(res, rssResource);
-                                        });
+                    .then(function(user) {
+                        if (!!user._id) {
+                            return getRssResource(user._id, page, limit)
+                                .then(function(rssResource) {
+                                    if (utilsSrv.isErrorObject(rssResource)) {
+                                        return utilsSrv.failedResponse(res, rssResource);
                                     }
-                        }, function(error) {
-                            return utilsSrv.authenticateFailed(res, error);
-                        });
+                                    return utilsSrv.successResponse(res, rssResource);
+                                });
+                        }
+                    }, function(error) {
+                        return utilsSrv.authenticateFailed(res, error);
+                    });
             }
 
             return utilsSrv.failedResponse(res, {
@@ -98,20 +99,20 @@
             var catelogId = req.query.catelogId;
             var page = req.query.page;
             var limit = !!req.query.limit ? req.query.limit : 5;
-           
+
             return getRssItemsList(catelogId, page, limit)
-                    .then(function(data){
-                        return utilsSrv.successResponse(res, data);
-                    }, function(error){
-                        return utilsSrv.failedResponse(res, error);
-                    });
+                .then(function(data) {
+                    return utilsSrv.successResponse(res, data);
+                }, function(error) {
+                    return utilsSrv.failedResponse(res, error);
+                });
         });
 
 
-        app.post('/api/rss/removeCatelogs', function(req, res){
+        app.post('/api/rss/removeCatelogs', function(req, res) {
             var catelogIds = req.body.catelogIds;
-           
-            if(!catelogIds){
+
+            if (!catelogIds) {
                 return utilsSrv.failedResponse(res, {
                     error: 'you dont selected any catelogs'
                 });
@@ -119,155 +120,23 @@
             var token = authSrv.getTokenFrmHttpRequest(req);
             return authSrv.verifyToken(token)
                 .then(function(user) {
-                        return removeSelectedRssUserMap(user._id, catelogIds)
-                            .then(function(data) {
-                                if (utilsSrv.isErrorObject(data)) {
-                                    return utilsSrv.failedResponse(res, data);
-                                }
-                                return utilsSrv.successResponse(res, data);
-                            });
-                    }, function(error) {
-                            return utilsSrv.authenticateFailed(res, error);
-                    });
-        });
-
-        app.post('/api/post/favorite', function(req, res){
-            var postId = req.body.postId;
-            var token = authSrv.getTokenFrmHttpRequest(req);
-            return authSrv.verifyToken(token)
-                        .then(function(user) {
-                            return addFavorForPost(postId, user._id)
-                                    .then(function(data){
-                                        if (utilsSrv.isErrorObject(data)) {
-                                            return utilsSrv.failedResponse(res, data);
-                                        }
-                                        return utilsSrv.successResponse(res, data);
-                                    });
-                        }, function(error){
-                            return utilsSrv.authenticateFailed(res, error);
-                        });
-
-        });
-
-        app.get('/api/post/comment', function(req, res) {
-            var postId = req.query.postId;
-            return getPostComments(postId)
-                    .then(function(data){
-                        return utilsSrv.successResponse(res, data);
-                    },function(error){
-                        return utilsSrv.failedResponse(res, dta);
-                    });
-        });
-
-        app.post('/api/post/comment', function(req, res) {
-            var postId = req.body.postId;
-            var comment = req.body.comment;
-            var token = authSrv.getTokenFrmHttpRequest(req);
-            return authSrv.verifyToken(token)
-                .then(function(user) {
-                    var username = user.username ? user.username : user.email.split('@')[0];
-                    return addCommentForPost(postId, user._id, comment, username)
+                    return removeSelectedRssUserMap(user._id, catelogIds)
                         .then(function(data) {
+                            if (utilsSrv.isErrorObject(data)) {
+                                return utilsSrv.failedResponse(res, data);
+                            }
                             return utilsSrv.successResponse(res, data);
-                        }, function(error) {
-                            return utilsSrv.failedResponse(res, error);
                         });
                 }, function(error) {
                     return utilsSrv.authenticateFailed(res, error);
                 });
         });
 
-        app.post('/api/rss/thumbUp', function(req, res){
-            var postId = req.body.postId;
 
-            return addThumbUpForPost(postId)
-                    .then(function(data){
-                        return utilsSrv.successResponse(res, data);
-                    }, function(error){
-                        return utilsSrv.failedResponse(res, error);
-                    });
-        });
 
         /*Implemention**/
-        function getPostComments(postId){
-            var deferred = Q.defer();
-
-            if(!postId){
-                deferred.reject({
-                    error: 'post id is empty'
-                });
-                return deferred.promise;
-            }
-            return rssRequest.getPostCommentsById(postId);
-        }
-
-        function addFavorForPost(postId, userId){
-            var deferred = Q.defer();
-
-            if(!postId || !userId){
-                deferred.reject({
-                    error: 'user id or post id is empty'
-                });
-
-                return deferred.promise;
-            }
-
-            return rssPersistence.addFavorForPost(postId, userId)
-                                .then(function(data){
-                                    if(utilsSrv.isErrorObject(data)){
-                                        //deferred.reject(data);
-                                        console.log(data);
-                                        //return data;
-                                    }
-                                    return data;
-                                });
-        }
-
-        function addThumbUpForPost(postId) {
-            if (!postId) {
-                deferred.reject({
-                    error: 'post id is empty'
-                });
-
-                return deferred.promise;
-            }
-
-            return addThumbUpForPost(postId)
-                .then(function(data) {
-                    if (utilsSrv.isErrorObject(data)) {
-                        deferred.reject(data);
-                        return deferred.promise;
-                    }
-                    return data;
-                });
-        }
-
-        function addCommentForPost(postId, userId, comment, user){
-             var deferred = Q.defer();
-
-            if(!postId || !userId || !comment || comment.length > 250){
-               
-                deferred.reject({
-                    error: 'your comments not according to rules'
-                });
-
-                return deferred.promise;
-            }
-
-            return rssPersistence.addCommentForPost(postId, userId, comment, user)
-                          .then(function(data){
-                            if(utilsSrv.isErrorObject(data)){
-                                //deferred.reject(data);
-                                //return deferred.promise;
-                            }
-                            return data;
-                          });
-
-        }
-
-
         function removeSelectedRssUserMap(userId, catelogids) {
-            if(userId || catelogids){
+            if (userId || catelogids) {
 
             }
 
@@ -280,11 +149,11 @@
                 });
         }
 
-        function getRssItemsList(catelogId, page, limit){
+        function getRssItemsList(catelogId, page, limit) {
 
             var deferred = Q.defer();
 
-            if(!catelogId){
+            if (!catelogId) {
                 logger.error('catelogId is empty in the /api/rss/items');
 
                 deferred.reject({
@@ -295,38 +164,38 @@
             }
 
             return rssRequest.requestRssItemsByCatelogId(catelogId, page, limit)
-                          .then(function(items) {
-                            if (utilsSrv.isErrorObject(items)) {
-                                logger.error('requestRssItemsByCatelogId failed when catelogId is ' + catelogId + ' #error# ' + items);
-                                deferred.reject(items);
-                                return deferred.promise;
-                            }
-                            return itmes;
-                        });
+                .then(function(items) {
+                    if (utilsSrv.isErrorObject(items)) {
+                        logger.error('requestRssItemsByCatelogId failed when catelogId is ' + catelogId + ' #error# ' + items);
+                        deferred.reject(items);
+                        return deferred.promise;
+                    }
+                    return itmes;
+                });
         }
 
 
-        function getRssItem(id){
+        function getRssItem(id) {
             return rssRequest.requestRssItemById(id)
-                            .then(function(post){
-                                if(utilsSrv.isErrorObject(post)){
-                                    return post;
-                                }
-                                post.src = src;
-                                post.date = utilsSrv.formatDate(post.updated);
-                                return post;
-                            });
+                .then(function(post) {
+                    if (utilsSrv.isErrorObject(post)) {
+                        return post;
+                    }
+                    post.src = src;
+                    post.date = utilsSrv.formatDate(post.updated);
+                    return post;
+                });
         }
 
-        function getRssContent(id){
+        function getRssContent(id) {
             return rssRequest.requestRssItemContentByItemId(id)
-                            .then(function(content){
-                                if(utilsSrv.isErrorObject(content)){
-                                    logger.error('requestRssItemContentByItemId failed when id is ' + id + ' the #error# ' + content);
-                                    return content;
-                                }
-                                return content;
-                            });
+                .then(function(content) {
+                    if (utilsSrv.isErrorObject(content)) {
+                        logger.error('requestRssItemContentByItemId failed when id is ' + id + ' the #error# ' + content);
+                        return content;
+                    }
+                    return content;
+                });
         }
 
 
@@ -344,14 +213,14 @@
         function subscribe(link, user) {
             //request rss resource
             return rssRequest.requestRssResourceFrmNet(link)
-                    .then(function(data) {
+                .then(function(data) {
 
-                        if (utilsSrv.isErrorObject(data)) {
-                            logger.error(link + 'at requestRssResourceFrmNet happened an error #error# ' + data);
-                            return data;
-                        }
-                        return saveRssResource(data.catelog, data.items, user);
-                    });
+                    if (utilsSrv.isErrorObject(data)) {
+                        logger.error(link + 'at requestRssResourceFrmNet happened an error #error# ' + data);
+                        return data;
+                    }
+                    return saveRssResource(data.catelog, data.items, user);
+                });
         }
 
 
@@ -360,20 +229,20 @@
             if (!catelog || !items) {
                 logger.error('the catelog or items is null or undefined ever');
                 return {
-                     error: 'the rss has any resource'
-                 };
+                    error: 'the rss has any resource'
+                };
             }
 
             //save RSS resourec to database
             return rssPersistence.saveRssResource(catelog, items)
-                    .then(function(data) {
-                        if (utilsSrv.isErrorObject(data)) {
-                            logger.error('saveRssResource happened a problem catelog' + catelog + 'and items are' + items + ' #error# ' + data);
-                            return data;
-                        }
+                .then(function(data) {
+                    if (utilsSrv.isErrorObject(data)) {
+                        logger.error('saveRssResource happened a problem catelog' + catelog + 'and items are' + items + ' #error# ' + data);
+                        return data;
+                    }
 
-                        return addRssUserRelation(data, user);
-                    });
+                    return addRssUserRelation(data, user);
+                });
         }
 
         function addRssUserRelation(catelog, user) {
@@ -386,13 +255,13 @@
 
             //upate user and rss resource relations
             return rssPersistence.updateUserCatelogList(user._id, catelog._id)
-                    .then(function(userCatelog) {
-                        if (utilsSrv.isErrorObject(userCatelog)) {
-                            logger.error('updateUserCatelogList failed in /api/rss the userid is ' + user._id + ' and catelog is' + catelog._id);
-                            return userCatelog;
-                        }
-                        return catelog;
-                    });
+                .then(function(userCatelog) {
+                    if (utilsSrv.isErrorObject(userCatelog)) {
+                        logger.error('updateUserCatelogList failed in /api/rss the userid is ' + user._id + ' and catelog is' + catelog._id);
+                        return userCatelog;
+                    }
+                    return catelog;
+                });
         }
 
 

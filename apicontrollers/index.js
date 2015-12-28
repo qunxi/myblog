@@ -7,6 +7,8 @@
     var contractCtrl = require('./contractController.js');
     var jobCtrl = require('./jobController.js');
     var bookCtrl = require('./bookController.js');
+    var accountCtrl = require('./accountController.js');
+    var postCtrl = require('./postController.js');
 
     apicontrollers.init = function (app) {
         userCtrl.init(app);
@@ -16,6 +18,8 @@
         jobCtrl.init(app);
         bookCtrl.init(app);
         contractCtrl.init(app);
+        accountCtrl.init(app);
+        postCtrl.init(app);
     };   
 
 })(module.exports);

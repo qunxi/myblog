@@ -85,6 +85,18 @@
                   });
     };
 
+    RssItemSchema.statics.getRssItemsByIds = function(ids) {
+        return this.find({$or: ids})
+            .then(function(items) {
+                return items;
+            }, function(error) {
+                return {
+                    message: 'data base query occur a problem when you query items by ids',
+                    error: error
+                };
+            });
+    };
+    
 
     RssItemSchema.statics.getRssItemContentById = function(id){
         return this.getRssItemById(id)

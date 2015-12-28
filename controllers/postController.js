@@ -13,15 +13,11 @@
 
             return post.getPostByPostId(id, userId, src)
                 .then(function(data) {
-                    if (utils.isErrorObject(data)) {
-                        return utils.webErrorRender(data);
-                    }
                     return res.render('post', {
                         post: data.post
                     });
-
                 }, function(error) {
-                    return utils.webErrorRender(error);
+                    return utils.webErrorRender(res, error);
                 });
         });
 
@@ -30,16 +26,12 @@
             var limit = 12;
             return post.getPostsList(page, limit)
                 .then(function(data) {
-                    if (utils.isErrorObject(data)) {
-                        return utils.webErrorRender(data);
-                    }
-                    
                     return res.render('index', {
-                       posts: JSON.stringify(data.data.items), count: data.data.count
+                        posts: JSON.stringify(data.data.items),
+                        count: data.data.count
                     });
                 }, function(error) {
-                	console.log(error);
-                    return utils.webErrorRender(error);
+                    return utils.webErrorRender(res, error);
                 });
         });
 

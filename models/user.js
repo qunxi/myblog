@@ -1,6 +1,7 @@
 ﻿(function(User) {
     'use strict';
 
+    var Q = require('q');
     var bcrypt = require('bcrypt-nodejs');
     var mongoose = require('mongoose');
 
@@ -10,13 +11,14 @@
         password: String,
         actived: Boolean,
         mobilePhone: String,
-        sex: Boolean,
+        sex: Number,
         address: String,
         github: String,
         blog: String,
         description: String,
         realName: String,
-        published: Boolean
+        published: Number,
+        registerDate: Date
     });
 
     UserSchema.methods.toJSON = function() {
@@ -29,9 +31,19 @@
         bcrypt.compare(password, this.password, callback);
     };
 
+    UserSchema.methods.comparePasswordPromise = function(password) {
+        return Q.nfcall(bcrypt.compare, password, this.password);
+    };
+
     UserSchema.statics.findUserById = function(id) {
         return this.findOne({
             _id: id
+        }).then(function(data){
+            return data;
+        }, function(error){
+            return {
+                error: 'find user has an error'
+            };
         });
     };
 

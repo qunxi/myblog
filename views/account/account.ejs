@@ -1,39 +1,41 @@
-<div class="row">
-
-<div class="main-area col-md-8">
+<div class="row" ng-controller="AccountCtrl as vm">
+<div class="sidebar col-md-3">
+	<side-bar></side-bar>
+</div>
+<div class="main-area col-md-8" >
 		<div class="message">您所填写的信息有助于我向您推荐感兴趣的信息（文章，工作，程序猿），说不定还能被丛林中的hunter发现，我们会根据您的意愿公开你所填写的信息</div>
 		<form class="form-horizontal">
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">真实姓名</label>
 			    <div class="col-sm-4">
-			      <input class="form-control pull-left" type="text"/>
+			      <input class="form-control pull-left" ng-model="vm.realName" type="text"/>
 			    </div>
                 <span class="note pull-left">保密</span>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">用户名</label>
 			    <div class="col-sm-4">
-			      <input class="form-control pull-left" type="text"/>
+			      <input class="form-control pull-left" type="text" ng-model="vm.userName"/>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">Email</label>
 			    <div class="col-sm-6">
-			      <input class="form-control" type="text" disable/>
+			      <input class="form-control" ng-model="vm.email" type="text" disabled/>
 			    </div>
 			    <span class="note pull-left">保密</span>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">手机</label>
 			    <div class="col-sm-4">
-			      <input class="form-control" type="text"/>
+			      <input class="form-control" ng-model="vm.mobilePhone" type="text"/>
 			    </div>
 			    <span class="note pull-left">保密</span>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">地址</label>
 			    <div class="col-sm-6">
-			      <input class="form-control" type="text"/>
+			      <input class="form-control" type="text" ng-model="vm.address"/>
 			    </div>
 			    <span class="note pull-left">保密</span>
 			  </div>
@@ -41,13 +43,13 @@
 			    <label class="col-sm-2 control-label">性别</label>
 			    <div class="col-sm-6">
 			       <label class="radio-inline col-sm-3">
-  					 <input type="radio" name="sex" value="male"/>男程序猿
+  					 <input type="radio" name="sex" value="0" ng-model="vm.sex" ng-checked="vm.sex === 0"/>男程序猿
 				   </label>
 				   <label class="radio-inline col-sm-3">
-  					 <input type="radio" name="sex" value="female"/>女程序猿
+  					 <input type="radio" name="sex" value="1" ng-model="vm.sex" ng-checked="vm.sex === 1"/>女程序猿
 				   </label>
 			       <label class="radio-inline col-sm-3">
-  					 <input type="radio" name="sex" value="unknown"/>程序猿
+  					 <input type="radio" name="sex" value="2" ng-model="vm.sex" ng-checked="vm.sex === 2"/>程序猿
 				   </label>
 			    </div>
 			  </div>
@@ -60,40 +62,38 @@
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">博客</label>
 			    <div class="col-sm-6">
-			      <input class="form-control" type="text"/>
+			      <input class="form-control" type="text" ng-model="vm.blog"/>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">简介</label>
 			    <div class="col-sm-6">
-			      <textArea class="form-control" type="text"></textArea>
+			      <textArea class="form-control" type="text" ng-model="vm.description"></textArea>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">公开个人信息</label>
 			    <div class="col-sm-6">
 				  	<label class="radio-inline col-sm-3">
-	  					 <input type="radio" name="publish" value="part"/>部分信息
+	  					 <input type="radio" name="publish" ng-model="vm.published" value="0" ng-checked="vm.published === 0"/>部分信息
 					</label>
 					<label class="radio-inline col-sm-3">
-					  <input type="radio" name="publish" value="all"/> 全部信息
+					  <input type="radio" name="publish" ng-model="vm.published"  ng-checked="vm.published === 1" value="1"/> 全部信息
 					</label>
 					<label class="radio-inline col-sm-3">
-					  <input type="radio" name="publish" value="none"/> 闭关勿扰
+					  <input type="radio" name="publish" ng-model="vm.published"  ng-checked="vm.published === 2" value="2"/> 闭关勿扰
 					</label>
 				</div>
 			  </div>
 			  <div class="col-sm-8">
-			  <button class="btn btn-primary pull-right">提交</button>
+			  <button class="btn btn-primary pull-right" ng-click="vm.updateAccount()">提交</button>
 			  </div>
 		</form>
 </div>
 
-<div class="sidebar col-md-4">
-	<side-bar></side-bar>
+
+
 </div>
 
-</div>
 
-
-	<script src="js/app/account/account.js"></script>
+<script src="js/app/account/account.js"></script>

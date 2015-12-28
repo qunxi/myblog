@@ -45,7 +45,8 @@ a:hover{
     float: left;
     background-color: #fff;
     padding: 0px 5px 10px 5px;
-    width: 350px;
+    width: 100%;
+    max-width: 400px;
 }
 
 .post-title{

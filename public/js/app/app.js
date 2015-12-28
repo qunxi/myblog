@@ -15,10 +15,20 @@
 		vm.username = authToken.getCurrentUser() ? authToken.getCurrentUser().email : '';
 
 		vm.logout = logout;
-
+		vm.go2Account = go2Account;
+		
 		function logout(){
 			authToken.removeCurrentUser();
 			vm.isAuthenticated = false;
+			utilsService.redirectUrl('login');
+		}
+
+		function go2Account(){
+
+			var userId = authToken.getCurrentUser() ? authToken.getCurrentUser()._id :  '';
+			console.log(userId);
+			utilsService.redirectUrl('account');
+			//utilsService.redirectUrl('account?userId=' + userId);
 		}
 		//console.log(vm.isAuthenticated, authToken.getToken());
 	}

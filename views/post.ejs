@@ -14,7 +14,7 @@
 	</div>
 	<div>
 		<input type="hidden" id="postId" value="<%= post._id %>"/>
-		<button class="btn btn-danger" ng-click="vm.thumbUp()"><i class="glyphicon glyphicon-thumbs-up"></i>赞<%= post.thumbUp%></button>
+		<button class="btn btn-danger" ng-click="vm.markThumbUp()" ng-disabled="vm.isDisableThumbUp"><i class="glyphicon glyphicon-thumbs-up" ng-init="vm.thumbUp = <%= post.thumbUp%>"></i>赞 {{vm.thumbUp}}</button>
 		<button class="btn btn-warning" ng-click="vm.addAsFavorite()"><i ng-init="vm.isYourFavorite = <%= post.favor %>" ng-class="{false: 'glyphicon glyphicon-heart-empty', true: 'glyphicon glyphicon-heart'}[vm.isYourFavorite]"></i>收藏</button>
 		<button class="btn btn-primary" ng-if="!vm.isAuthenticated" ng-click="vm.submitComment()"><i class="glyphicon glyphicon-comment"></i>点评</button>
 	</div>

@@ -146,10 +146,12 @@
 
 			link: function(scope, element, attrs){
 				scope.menuItems = [{text: '个人信息', url: '/account', active: true}, 
-								   {text: '朋友圈', url: '/#', active: false}, 
-								   {text: '修改密码', url: '/changepassword', active: false},
-								   {text: '我的订阅', url: '/subscribe', active: false},
-								   {text: '我的工作', url: '/#', active: false}];
+								   //{text: '朋友圈', url: '/#', active: false}, 
+								   {text: '我的收藏', url: '/favorposts', active: false},
+								   {text: '修改密码', url: '/changepassword', active: false}
+								   //{text: '我的订阅', url: '/subscribe', active: false},
+								   //{text: '我的工作', url: '/#', active: false}
+								   ];
 				
 				scope.mouseIn = function(){
 					var lis = element.find('ul li');

@@ -17,11 +17,6 @@
             userId: userId,
             postId: postId
         }).then(function(data) {
-            /*if(data){
-                return {
-                    error: 'the favorite has existed'
-                };
-            }*/
             return data;
         }, function(error) {
             return {
@@ -29,6 +24,21 @@
             };
         });
     };
+
+    PostFavoriteSchema.statics.getFavoritesByUserId = function(userId, page, limit) {
+        return this.find({userId: userId})
+            .skip(page * limit)
+            .limit(limit)
+            .then(function(items) {
+                return items;
+            }, function(error) {
+                return {
+                    message: 'data base query occur a problem when you query the latest item',
+                    error: error
+                };
+            });
+    };
+
 
     module.exports = mongoose.model(model, PostFavoriteSchema);
 

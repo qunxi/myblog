@@ -13,6 +13,7 @@
         switch(data.status){
             case 404:
             case 401:
+            case 400:
                 return res.render('404');
             case 500:
                 return res.render('500');
@@ -21,9 +22,6 @@
     };
 
     UtilsService.httpResponse = function(res, data){
-        if(!data || !data.status){
-            return res.status(500).send('the server did not get any response');
-        }
         
         return res.status(data.status).send(data.data);
     };
