@@ -3,8 +3,13 @@
 	<side-bar></side-bar>
 </div>
 <div class="main-area col-md-8">
-	<div ng-repeat="favor in vm.favors"></div>
+	<div ng-repeat="favor in vm.favorposts" class="favor-collection">
+		<div class="favor-title"><a ng-href="{{favor.url}}"><span ng-bind="favor.title"></span></a><button class="pull-right glyphicon glyphicon-trash btn btn-link" ng-click="vm.removeFavorPost(favor.postId)"></button></div>
+		<div class="favor-description" ng-bind-html="favor.description"></div>
+		<div></div>
+	</div>
 </div>
 </div>
 
+<script src="js/app/post/postService.js"></script>
 <script src="js/app/account/account.js"></script>

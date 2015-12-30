@@ -9,6 +9,7 @@
     var RssItem = require('../models/rssItem.js');
     var PostFavorite = require('../models/postFavorite.js');
     var PostComment = require('../models/postComment.js');
+    var rssCatelog = require('../models/rssCatelog.js');
 
     postService.getPostsList = getPostsList;
     postService.getPostByPostId = getPostByPostId;
@@ -17,6 +18,9 @@
     postService.addFavor = addFavor;
     postService.addComment = addComment;
     postService.getFavorListByUserId = getFavorListByUserId;
+
+
+    var  DESCRIPTION_COUNT = 480;
 
     function getFavorListByUserId(userId, page, limit) {
         var deferred = Q.defer();
@@ -58,7 +62,8 @@
                             return {
                                 postId: post._id,
                                 title: post.title,
-                                description: !post.description ? utils.cutString(post.content, 200) : post.description
+                                url: '/post?id=' + post._id + '&userId=' + userId,//post.link,
+                                description: utils.cutString(post.content, DESCRIPTION_COUNT)
                             };
                         });
 
@@ -131,7 +136,7 @@
                     });
                     return deferred.promise;
                 }
-                post.src = src;
+                //post.src = src;
                 post.date = utils.formatDate(post.updated);
                 return {
                     status: 200,
@@ -330,15 +335,26 @@
                 if (!post || utils.isErrorObject(post)) {
                     return post;
                 }
-                return PostFavorite.isFavoriteExist(userId, postId)
-                    .then(function(data) {
-                        if (!data || utils.isErrorObject(data)) {
-                            post.favor = false;
+
+            return rssCatelog.getCatelogById(post.catelogId)
+                .then(function(catelog) {
+                    if (!catelog || utils.isErrorObject(catelog)) {
+                        return catelog;
+                    }
+
+                    return PostFavorite.isFavoriteExist(userId, postId)
+                        .then(function(data) {
+                            if (!data || utils.isErrorObject(data)) {
+                                post.favor = false;
+                                post.src = catelog.title;
+                                return post;
+                            }
+                            post.favor = true;
+                            post.src = catelog.title;
                             return post;
-                        }
-                        post.favor = true;
-                        return post;
-                    });
+                        });
+
+                });
             });
     }
 
@@ -350,10 +366,10 @@
                     return data;
                 }
                 var items = _.chain(data).map(function(n) {
-                    if (!n.description) {
+                    /*if (!n.description) {
                         n.description = n.content;
-                    }
-                    n.description = utils.cutString(n.description, 100);
+                    }*/
+                    n.description = utils.cutString(n.content, DESCRIPTION_COUNT);
                     var item = {
                         _id: n._id,
                         catelog: n.catelogId,

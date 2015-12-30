@@ -108,74 +108,7 @@
             });
     }
 
-    function addCommentForPost(postId, userId, comment, username) {
-        var postComment = new PostComment({
-            userId: userId,
-            postId: postId,
-            date: new Date(),
-            user: username,
-            comment: comment
-        });
 
-        return PostComment.isCommentExist(userId, postId, comment)
-            .then(function(data) {
-                if (utils.isErrorObject(data)) {
-                    return data;
-                }
-                return postComment.save()
-                    .then(function(data) {
-                        return data;
-                    }, function(error) {
-                        return error;
-                    });
-            });
-    }
-
-
-    function addFavorForPost(postId, userId) {
-        var postFavorite = new PostFavorite({
-            userId: userId,
-            postId: postId
-        });
-        return PostFavorite.isFavoriteExist(userId, postId)
-            .then(function(data) {
-                if (utils.isErrorObject(data)) {
-                    return data;
-                }
-                if(!data){
-                    return postFavorite.save()
-                        .then(function(data) {
-                            return data;
-                        }, function(error) {
-                            return {
-                                error: 'add favorite failed'
-                            };
-                        });
-                }
-                else{
-                    return data.remove();
-                }
-            });
-    }
-
-    function  addThumbUpForPost(postId){
-        return RssItem.getRssItemById(id)
-                   .then(function(data){
-                       if(utilsSrv.isErrorObject(data)){
-                            return data;
-                       }
-
-                      data.thumbUp++;
-                      return  data.save()
-                              .then(function(data){
-                                return data;
-                              }, function(error){
-                                return {
-                                    error: 'update thumbup failed'
-                                };
-                              });
-                   });
-    }
 
     function saveRssCatelog(catelog, items) {
 

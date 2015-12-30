@@ -37,9 +37,10 @@ function LoginCtrl(accountService, utilsService, authToken) {
 }
 
 angular.module('app').controller('AccountCtrl', AccountCtrl);
-AccountCtrl.$inject = ['accountService', 'authToken', 'utilsService'];
-
-function AccountCtrl(accountService, authToken, utilsService) {
+AccountCtrl.$inject = ['$sce', 'accountService', 'postService', 'authToken', 'utilsService'];
+ 
+           
+function AccountCtrl($sce, accountService, postService, authToken, utilsService) {
     var vm = this;
 
     vm.userId = '';
@@ -64,22 +65,39 @@ function AccountCtrl(accountService, authToken, utilsService) {
 
     vm.updateAccount = updateAccount;
     vm.changePasswords = changePasswords;
-
+    vm.removeFavorPost = removeFavorPost;
     getAccount();
     getFavorPosts();
 
+    function removeFavorPost(postId) {
+
+        postService.addAsFavorite(postId)
+            .then(function(data) {
+                if (utilsService.isErrorObject(data)) {
+                    return data;
+                }
+                _.remove(vm.favorposts, function(n) {
+                    return n.postId === postId;
+                });
+            });
+    }
+
     function getFavorPosts(page, limit){
-    	var user = authToken.getCurrentUser();
-    	if(!user._id){
-    		return [];
-    	}
-    	//hard code
+    	    	
     	page = 0;
     	limit = 100;
-    	accountService.getFavorPostList(user._id, page, limit)
+    	postService.getFavorPostList(page, limit)
     		.then(function(data){
-    			vm.favorposts = data;
-    			console.log(data);
+    			if(utilsService.isErrorObject(data)){
+    				vm.favorposts = [];
+    				return;
+    			}
+    			//console.log(data);
+    			vm.favorposts = _.map(data, function(n){
+    				n.description = $sce.trustAsHtml(n.description, 100);
+    				return n; 
+    			});
+    			
     		});
     }
 
@@ -122,7 +140,7 @@ function AccountCtrl(accountService, authToken, utilsService) {
 
     function updateAccount() {
     	var account = {
-    		//userId: vm.userId,
+    		
     		realName : vm.realName,
     		username : vm.userName,
     		mobilePhone: vm.mobilePhone,
@@ -196,23 +214,12 @@ function accountService($http, API_URL) {
         updateAccount: updateAccount,
         getAccount: getAccount,
         changePasswords: changePasswords,
-        getFavorPostList: getFavorPostList
+        //getFavorPostList: getFavorPostList
     };
 
     return service;
 
-    function getFavorPostList(userId, page, limit){
-    	
-    	return $http.get(API_URL + 'post/favorposts', {
-    		params: {userId: userId, page: page, limit: limit}
-    	}).then(function(res){
-    		return res.data;
-    	}, function(res){
-    		return {
-    			error: res.data
-    		};
-    	});
-    }
+    
 
     function changePasswords(originPassword, password){
     	return $http.post(API_URL + 'account/password', {

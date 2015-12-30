@@ -22,26 +22,26 @@
 
         function getCurrentUser() {
             if (!userCache) {
-                userCache = $window.localStorage.getItem(cacheKey);
+                userCache = $window.sessionStorage.getItem(cacheKey);
             }
             return !userCache ? null : userCache.user;
         }
 
         function getToken() {
             if (!userCache) {
-                userCache = angular.fromJson($window.localStorage.getItem(cacheKey));
+                userCache = angular.fromJson($window.sessionStorage.getItem(cacheKey));
             }
             return !userCache ? null : userCache.token;
         }
 
         function removeCurrentUser() {
             userCache = null;
-            $window.localStorage.removeItem(cacheKey);
+            $window.sessionStorage.removeItem(cacheKey);
         }
 
         function setCurrentUser(user) {
             userCache = user;
-            $window.localStorage.setItem(cacheKey, angular.toJson(user));
+            $window.sessionStorage.setItem(cacheKey, angular.toJson(user));
         }
 
         function isAuthenticated() {

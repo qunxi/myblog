@@ -59,6 +59,19 @@
                    });
     };
 
+    RssCatelogSchema.statics.getCatelogById = function(catelogId) {
+        return this.findOne({
+            _id: catelogId
+        }).then(function(data) {
+            return data;
+        }, function(error) {
+            return {
+                error: error,
+                message: 'getCatelogById occurs a problem'
+            };
+        });
+    };
+
     RssCatelogSchema.statics.getCatelogsByIds = function(catelogIds, page, limit) {
         return this.find({
                     $or: catelogIds

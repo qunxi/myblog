@@ -14,6 +14,8 @@
     var PostFavorite = require('../models/postFavorite.js');
     
 
+    var DESCRIPTION_COUNT = 480;
+
     rssRequestService.requestRssResourceFrmNet = function(link) {
 
         return httpRequest.request(link)
@@ -121,7 +123,7 @@
                                 if(!n.description){
                                     n.description = n.content;
                                 }
-                                n.description = utils.cutString(n.description, 100);
+                                n.description = utils.cutString(n.content, DESCRIPTION_COUNT);
                                 var item = {
                                     _id: n._id,
                                     catelog: n.catelogId,
@@ -317,12 +319,12 @@
             format = utils.formatImageUrl(content, link);
             content = format.content;
             images = format.images;
-            description = utils.cutString(content, 100);
+            description = utils.cutString(content, DESCRIPTION_COUNT);
         } else if (!!description && !!link) {
             format = utils.formatImageUrl(description, link);
             images = format.images;
             content = format.content;
-            description = utils.cutString(content, 100);
+            description = utils.cutString(content, DESCRIPTION_COUNT);
         }
 
         return {

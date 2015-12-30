@@ -64,16 +64,20 @@
 
 
         app.get('/api/post/favorposts', function(req, res) {
-            var userId = req.query.userId;
             var page = req.query.page;
             var limit = req.query.limit;
 
-            //console.log(userId);
-            return postSrv.getFavorListByUserId(userId, page, limit)
-                .then(function(data) {
-                    return utilsSrv.httpResponse(res, data);
+            var token = authSrv.getTokenFrmHttpRequest(req);
+            return authSrv.verifyToken(token)
+                .then(function(user) {
+                    return postSrv.getFavorListByUserId(user._id, page, limit)
+                        .then(function(data) {
+                            return utilsSrv.httpResponse(res, data);
+                        }, function(error) {
+                            return utilsSrv.httpResponse(res, error);
+                        });
                 }, function(error) {
-                    return utilsSrv.httpResponse(res, error);
+                    return utilsSrv.authenticateFailed(res, error);
                 });
         });
 
