@@ -49,7 +49,7 @@
         });
 
         app.get('/favorposts', function(req, res){
-            res.render('account/favorposts');
+            res.render('account/favorposts', {});
         });
     };
 
