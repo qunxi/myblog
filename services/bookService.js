@@ -2,12 +2,18 @@
     'use strict';
 
     var Book = require('../models/book.js');
+    var DoubanBook = require('../models/doubanBook.js');
     var utils = require('./utilsSrv.js');
     var authSrv = require('./authenticateSrv.js');
     var Q = require('q');
 
     bookService.submitBook = submitBook;
     bookService.getBooksList = getBooksList;
+
+    bookService.bulkSaveBookList = bulkSaveBookList;
+
+     bookService.getDoubanBooksList = getDoubanBooksList;
+
 
     function submitBook(book, token) {
         var deferred = Q.defer();
@@ -39,7 +45,8 @@
                         downloadLink: book.downloadLink,
                         buyLink: book.buyLink,
                         imageUrl: book.imageUrl,
-                        description: book.description
+                        description: book.description,
+                        rating: book.rating
                 }).then(function(data) {
                     if (utils.isErrorObject(data)) {
                         return {
@@ -73,6 +80,7 @@
 
         return Book.getBooksList(page, limit)
             .then(function(books) {
+                
                 if (utils.isErrorObject(books)) {
                     return {
                         error: books,
@@ -98,6 +106,56 @@
             });
     }
 
+    function getDoubanBooksList(page, limit) {
+        var deferred = Q.defer();
+
+        if (page < 0 || limit <= 0) {
+            deferred.reject({
+                status: 400,
+                error: 'the page or limit parameter is not valid'
+            });
+            return deferred.promise;
+        }
+
+        return DoubanBook.getBooksList(page, limit)
+            .then(function(books) {
+                
+                if (utils.isErrorObject(books)) {
+                    return {
+                        error: books,
+                        status: 500
+                    };
+                }
+                return DoubanBook.getBookCount()
+                    .then(function(count) {
+                        if (utils.isErrorObject(count)) {
+                            return {
+                                error: count,
+                                status: 500
+                            };
+                        }
+                        return {
+                            status: 200,
+                            data: {
+                                books: books,
+                                count: count
+                            }
+                        };
+                    });
+            });
+    }
+
+
+    function bulkSaveBookList(books){
+        return Book.bulkSaveBookList(books)
+                    .then(function(data){
+                        
+                        if (!utils.isErrorObject(data)) {
+                            return catelog;
+                        }
+                        return data;
+                    });
+    }
 
     /**/
     function saveBook(book) {
@@ -113,5 +171,6 @@
                 };
             });
     }
+
 
 })(module.exports);

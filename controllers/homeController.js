@@ -5,6 +5,8 @@
     var rssRequest = require('../services/rssRequestSrv.js');
     var bookService = require('../services/bookService.js');
 
+    var crawlService = require('../services/crawlService.js');
+
     homeController.init = function(app) {
 
         /*app.get('/', function(req, res) {
@@ -19,7 +21,24 @@
         	res.render('about');
         });
 
+        app.get('/test', function(req, res){
+            var link = 'http://www.douban.com/j/tag/items?';
+            link = link + 'start=9&limit=6&topic_id=62155&topic_name=%E7%BC%96%E7%A8%8B&mod=book';
+            crawlService.crawlBooksFromDouban(link);
+           
+            //res.render('doubanBook/book', {});
+        });
       
+        app.get('/doubanBook', function(req, res){
+            var page = 0;
+            var limit = 9;
+            bookService.getDoubanBooksList(page, limit)
+                       .then(function(data){
+                            return res.render('doubanBook/book', {books: JSON.stringify(data.data.books), count: data.data.count});
+                       }, function(error){
+                            return res.render('500', error);
+                       });
+        });
 
         app.get('/subscribe', function(req, res){
             res.render('account/subscribe', {});

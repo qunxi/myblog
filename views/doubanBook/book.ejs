@@ -12,12 +12,13 @@
 				<div ng-if="book.rating">评分:<span class="trans" ng-bind="book.rating"></span></div>
 			</div>
 			<div class="clearfix"></div>
+			<a class="btn btn-warning link" target="_blank" ng-click="vm.editBook(book)">修改</a>
 			<a class="btn btn-primary link" target="_blank" ng-href="{{book.buyLink}}">购买地址</a>
 			<a class="link" target="_blank" ng-href="{{book.downloadLink}}">电子书地址</a>
 		</div>
 	</div>
 
-	<!--<div ng-if="false" class="book-submit row">
+	<div ng-if="vm.isShowEdit" class="book-submit row">
 		<h3>提交书籍</h3>
 		<div class="col-md-6">
 			<input type="text" class="form-control" ng-model="vm.newBook.name" placeholder="书名"/>
@@ -25,14 +26,16 @@
 			<input type="text"  class="form-control" ng-model="vm.newBook.originName" placeholder="原作名"/>
 			<input type="text"  class="form-control" ng-model="vm.newBook.translator" placeholder="译者"/>
 			<input type="text"  class="form-control" ng-model="vm.newBook.publish" placeholder="出版社"/>
+			<input type="text"  class="form-control" ng-model="vm.newBook.doubanUrl" placeholder="豆瓣地址"/>
 			<input type="text"  class="form-control" ng-model="vm.newBook.imageUrl" placeholder="封面地址"/>
+			<input type="text"  class="form-control" ng-model="vm.newBook.rating" placeholder="评分"/>
 			<input type="text"  class="form-control" ng-model="vm.newBook.buyLink" placeholder="购买地址"/>
 			<input type="text"  class="form-control" ng-model="vm.newBook.downloadLink" placeholder="电子书下载地址"/>
 			<button class="btn btn-primary" ng-click="vm.submitBook()">提交</button>
 		</div>
-	</div>-->
+	</div>
 	<div>
-		<pagination page-size='5' total-size='vm.pageCount' current-page="1" page-change="vm.getBookList(currentPage)"></pagination>
+		<pagination page-size='5' total-size='vm.pageCount' current-page="1" page-change="vm.getDoubanBookList(currentPage)"></pagination>
 	</div>
 </div>
 

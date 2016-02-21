@@ -1,13 +1,13 @@
-(function(Book) {
-    'use strict';
+(function(DoubanBook){
+	'use strict';
 
     var mongoose = require('mongoose');
 
     var Types = mongoose.Schema.Types;
 
-    var model = 'Book';
+    var model = 'DoubanBook';
 
-    var BookSchema = new mongoose.Schema({
+    var DoubanBookSchema = new mongoose.Schema({
         name: String,
         author: String,
         publish: String,
@@ -21,7 +21,7 @@
         rating: Number
     });
 
-    BookSchema.statics.getBookCount = function(){
+    DoubanBookSchema.statics.getBookCount = function(){
         return this.find({})
                    .count()
                    .then(function(n){
@@ -34,7 +34,7 @@
                    });
     };
 
-    BookSchema.statics.getBooksList = function(page, limit){
+    DoubanBookSchema.statics.getBooksList = function(page, limit){
         return this.find({})
                    .skip(page * limit)
                    .limit(limit)
@@ -48,7 +48,7 @@
                     });
     };
 
-    BookSchema.statics.bulkSaveBookList = function(items){
+    DoubanBookSchema.statics.bulkSaveBookList = function(items){
         return this.collection
                    .insert(items)
                    .then(function(data) {
@@ -63,5 +63,5 @@
                     });
     };
 
-    module.exports = mongoose.model(model, BookSchema);
+    module.exports = mongoose.model(model, DoubanBookSchema);
 })(module.exports);

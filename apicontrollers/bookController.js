@@ -32,5 +32,19 @@
                        });
         });
 
+
+        //
+        //
+         app.get('/api/doubanBook', function(req, res) {
+            var page = req.query.page;
+            var limit = req.query.limit;
+            bookSrv.getDoubanBooksList(page, limit)
+                       .then(function(data){
+                           return utils.httpResponse(res, data);
+                       }, function(error){
+                           logger.error('GET /api/book?page=' + page + '&limit=' + limit +' has an error #' + error);
+                           return utils.httpResponse(res, error);
+                       });
+        });
     };
 })(module.exports);
