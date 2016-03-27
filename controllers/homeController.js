@@ -4,8 +4,9 @@
     var utils = require('../services/utilsSrv.js');
     var rssRequest = require('../services/rssRequestSrv.js');
     var bookService = require('../services/bookService.js');
-
     var crawlService = require('../services/crawlService.js');
+
+    var elektaService = require('../services/elektaService.js');
 
     homeController.init = function(app) {
 
@@ -62,6 +63,23 @@
                                 return res.render('mailVerification', {success: false});
                             });
             
+        });
+
+        app.get('/welcome', function(req, res){
+        	return res.render('elekta/welcome');
+        });
+
+        app.get('/interview', function(req, res){
+            var id = req.query.id;
+            elektaService.verification(id)
+                .then(function(data){
+                    if(!!data){
+                        console.log(data);
+                        return res.render('elekta/interview', data);
+                    }
+                    return res.render('elekta/welcome', {});
+                });
+        	
         });
 
         app.get('/book', function(req, res){

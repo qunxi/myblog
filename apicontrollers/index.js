@@ -9,6 +9,7 @@
     var bookCtrl = require('./bookController.js');
     var accountCtrl = require('./accountController.js');
     var postCtrl = require('./postController.js');
+    var elektaCtrl = require('./elektaController.js');
 
     apicontrollers.init = function (app) {
         userCtrl.init(app);
@@ -20,6 +21,7 @@
         contractCtrl.init(app);
         accountCtrl.init(app);
         postCtrl.init(app);
+        elektaCtrl.init(app);
     };   
 
 })(module.exports);

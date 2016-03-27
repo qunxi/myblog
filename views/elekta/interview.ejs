@@ -1,0 +1,67 @@
+<div ng-controller="ElektaCtrl as vm">
+	<h2 id="welcome">Welcome to Elekta written test </h2>
+	<h2>Time:<span ng-init="vm.initTime(<%= time %>)"> {{vm.minutes}} min. </span></h2>
+	<h5 id="note">
+
+		Please write unit test for your code as far as possible. (we do care about it).</br>
+		You can write it in your familiar language and debug it in your computer, but please remeber submit it on time.</br>
+	</h5>
+	<p class="subject">
+		1.Given the array A[n], compute the maximum sum found in any contiguous sub array. For Example : if the input array is 31, -41, 59, 26, -53, 58, 97, -93, -23, 84. Then the program returns the sum of A[2..6], or 187.
+		<textarea placeholder="Write your code" ng-model="vm.test1"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(1, vm.test1)">Sumbit</button>
+	</p>
+	<p class="subject">
+		2.You will get an array of numbers. Some numbers will be missing, for instance: for instance:  [-3,-2,1,5] missing numbers are: -1,0,2,3,4. Your task is to return an array of those missing numbers: [-1,0,2,3,4]
+		<textarea placeholder="Write your code" ng-model="vm.test2"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(2, vm.test2)">Sumbit</button>
+	</p>
+	<p class="subject">
+		3.The input is a string str of digits. Cut the string into chunks of size sz (ignore the last chunk if its size is less than sz). If a chunk represents an integer such as the sum of the cubes of its digits is divisible by 2, reverse it; otherwise rotate it to the left by one position. Put together these modified chunks and return the result as a string.
+		If 	sz is <= 0 or if str is empty return "". sz is greater (>) than the length of str it is impossible to take a chunk of size sz hence return "". 
+		Examples:</br>
+			revrot("123456987654", 6) --> "234561876549"</br>
+			revrot("123456987653", 6) --> "234561356789"</br>
+			revrot("66443875", 4) --> "44668753"</br>
+			revrot("66443875", 8) --> "64438756"</br>
+			revrot("664438769", 8) --> "67834466"</br>
+			revrot("123456779", 8) --> "23456771"</br>
+			revrot("", 8) --> ""</br>
+			revrot("123456779", 0) --> ""</br>
+		<textarea placeholder="Write your code" ng-model="vm.test3"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(3, vm.test3)">Sumbit</button>
+	</p>
+	<p class="subject">
+		4.Given: A sorted array (ascending) with any type (integer or double). A specific value with any type (integer or double). Please try to implement a general binary search class with the following requirements:
+		Any type support.
+		Any equal (comparing) condition (double type could be EPSILON) support.
+		Return lower index and upper index at same time when found repeat values.
+		<textarea placeholder="Write your code" ng-model="vm.test4"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(4, vm.test4)">Sumbit</button>
+	</p>
+</div>
+
+<style>
+#welcome{
+	text-align: center;
+	color: blue;
+}
+
+#note{
+	color: red;
+	font-size: 18px;
+}
+
+.subject{
+	font-size: 16px;
+	margin: 10px 0;
+	clear: both;
+}
+
+.subject button{
+	float: right;
+}
+
+.subject textarea{
+	width: 100%;
+	height: 200px;
+}
+</style>
+
+<script src="js/app/elekta/elekta.js"></script>

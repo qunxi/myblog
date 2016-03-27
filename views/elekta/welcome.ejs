@@ -1,0 +1,34 @@
+<div ng-controller="ElektaCtrl as vm">
+	<h2 id="welcome">Welcome to Elekta written test</h2>
+	<p id="note">
+		Your will have an hour and a half to complete following tests, we will start time after you click Start button</br>
+	</p>
+	<div class="col-sm-5 col-md-3 col-md-offset-5">
+		<input class="form-control" ng-model="vm.account" type="text" placeholder="your account"/>
+		<button class="btn btn-primary btn-block" ng-click="vm.startTime(vm.account)">Start</button>
+		<!--<button class="btn btn-primary btn-block" ng-click="vm.addAccount(vm.account)">Add</button>-->
+		<p class="error">{{vm.error}}</p>
+	</div>
+</div>
+<style>
+	h2{
+		text-align: center;
+		color: #3df;
+		font-family: 'elekta-font', Verdana, Geneva, Arial, Helvetica, sans-serif;
+	}
+
+	#note{
+		color: #ee7521;
+		font-size: 18px;
+		text-align: center;
+		font-family: 'elekta-font', Verdana, Geneva, Arial, Helvetica, sans-serif;
+	}
+	.error{
+		margin: 5px 0;
+		color: red;
+		font-size: 16px;
+		font-family: 'elekta-font', Verdana, Geneva, Arial, Helvetica, sans-serif;
+	}
+</style>
+
+<script src="js/app/elekta/elekta.js"></script>
