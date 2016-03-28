@@ -35,10 +35,10 @@
             var name = req.body.username;
            
             return elektaService.submitAnswer(id, answer, userId, name)
-                            .then(function(){
-
-                            }, function(){
-
+                            .then(function(data){
+                                return utilsSrv.httpResponse(res, data);
+                            }, function(error){
+                                return utilsSrv.httpResponse(res, error);
                             });
         });
 

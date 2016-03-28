@@ -24,7 +24,7 @@ function elektaService($http, API_URL, utilsService, $window){
 
 	function addAccount(account){
 		var url = API_URL + 'elekta/addAccount';
-		console.log(account);
+				
 		$http.post(url, {account: account})
 			.then(function(data){
 				console.log(data);
@@ -38,12 +38,15 @@ function elektaService($http, API_URL, utilsService, $window){
 		var cache = angular.fromJson($window.sessionStorage.getItem('elekta'));
 		var userId = cache._id;
 		var username = cache.name;
-		$http.post(url, {id: id, answer: answer, userId: userId, username: username})
-			.then(function(data){
-				console.log(data);
-			}, function(error){
-				console.log(error);
-		});
+
+		return $http.post(url, {id: id, answer: answer, userId: userId, username: username})
+					.then(function(data){
+						return data;
+					}, function(res){
+						return {
+		                	error: res.data
+		            	};
+				});
 	}
 }
 
@@ -61,6 +64,10 @@ function ElektaCtrl(elektaService, $interval, utilsService){
 	vm.test2 = '';
 	vm.test3 = '';
 	vm.test4 = '';
+	vm.message1 = false;
+	vm.message2 = false;
+	vm.message3 = false;
+	vm.message4 = false;
 
 	vm.sumbitAnswer = sumbitAnswer;
 	vm.startTime = startTime;
@@ -81,7 +88,27 @@ function ElektaCtrl(elektaService, $interval, utilsService){
 		if(id > 4 || id < 1 || answer === ''){
 			return;
 		}
-		elektaService.sumbitAnswer(id, answer);
+		elektaService.sumbitAnswer(id, answer)
+			.then(function(data){
+				if(!utilsService.isErrorObject(data)){
+                    switch(id){
+                    	case 1:
+                    		vm.message1 = true;
+                    		break;
+                    	case 2:
+                    		vm.message2 = true;
+                    		break;
+                    	case 3:
+                    		vm.message3 = true;
+                    		break;
+                    	case 4:
+                    		vm.message4 = true;
+                    		break;
+                    }
+                }
+			},function(error){
+				console.log(error);
+			});
 	}
 
 	function startTime(account){

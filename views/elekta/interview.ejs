@@ -8,11 +8,15 @@
 	</h5>
 	<p class="subject">
 		1.Given the array A[n], compute the maximum sum found in any contiguous sub array. For Example : if the input array is 31, -41, 59, 26, -53, 58, 97, -93, -23, 84. Then the program returns the sum of A[2..6], or 187.
-		<textarea placeholder="Write your code" ng-model="vm.test1"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(1, vm.test1)">Sumbit</button>
+		<textarea placeholder="Write your code" ng-model="vm.test1"></textarea>
+		<span class="message" ng-if="vm.message1">提交成功</span>
+		<button class="btn btn-primary" ng-click="vm.sumbitAnswer(1, vm.test1)">Sumbit</button>
 	</p>
 	<p class="subject">
 		2.You will get an array of numbers. Some numbers will be missing, for instance: for instance:  [-3,-2,1,5] missing numbers are: -1,0,2,3,4. Your task is to return an array of those missing numbers: [-1,0,2,3,4]
-		<textarea placeholder="Write your code" ng-model="vm.test2"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(2, vm.test2)">Sumbit</button>
+		<textarea placeholder="Write your code" ng-model="vm.test2"></textarea>
+		<span class="message" ng-if="vm.message2">提交成功</span>
+		<button class="btn btn-primary" ng-click="vm.sumbitAnswer(2, vm.test2)">Sumbit</button>
 	</p>
 	<p class="subject">
 		3.The input is a string str of digits. Cut the string into chunks of size sz (ignore the last chunk if its size is less than sz). If a chunk represents an integer such as the sum of the cubes of its digits is divisible by 2, reverse it; otherwise rotate it to the left by one position. Put together these modified chunks and return the result as a string.
@@ -26,18 +30,27 @@
 			revrot("123456779", 8) --> "23456771"</br>
 			revrot("", 8) --> ""</br>
 			revrot("123456779", 0) --> ""</br>
-		<textarea placeholder="Write your code" ng-model="vm.test3"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(3, vm.test3)">Sumbit</button>
+		<textarea placeholder="Write your code" ng-model="vm.test3"></textarea>
+		<span class="message" ng-if="vm.message3">提交成功</span>
+		<button class="btn btn-primary" ng-click="vm.sumbitAnswer(3, vm.test3)">Sumbit</button>
 	</p>
 	<p class="subject">
 		4.Given: A sorted array (ascending) with any type (integer or double). A specific value with any type (integer or double). Please try to implement a general binary search class with the following requirements:
 		Any type support.
 		Any equal (comparing) condition (double type could be EPSILON) support.
 		Return lower index and upper index at same time when found repeat values.
-		<textarea placeholder="Write your code" ng-model="vm.test4"></textarea><button class="btn btn-primary" ng-click="vm.sumbitAnswer(4, vm.test4)">Sumbit</button>
+		<textarea placeholder="Write your code" ng-model="vm.test4"></textarea>
+		<span class="message" ng-if="vm.message4">提交成功</span>
+		<button class="btn btn-primary" ng-click="vm.sumbitAnswer(4, vm.test4)">Sumbit</button>
 	</p>
 </div>
 
 <style>
+.message{
+	color: green;
+	font-size: 12px;
+	font-weight: bolder;
+}
 #welcome{
 	text-align: center;
 	color: blue;

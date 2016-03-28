@@ -51,23 +51,20 @@
                             .then(function(data){
                                
                                 if(data !== null){
-                                    
                                     data.answer = answer;
-                                    
                                     data.updatedDate = new Date();
-                                    
-                                    data.save().then(
-                                    function(ret){
-                                        return {
-                                            status: 200,
-                                            data: 'updated'
-                                        };
-                                    }, function(error){
-                                        return {
-                                            status: 500,
-                                            data: 'there are has error in server'
-                                        };
-                                    });
+                                    return data.save().then(
+                                        function(ret){
+                                            return {
+                                                status: 200,
+                                                data: 'updated'
+                                            };
+                                        }, function(error){
+                                            return {
+                                                status: 500,
+                                                data: 'there are has error in server'
+                                            };
+                                        });
                                 }
                                 else{
                                     var test = new Test();
@@ -77,20 +74,19 @@
                                     test.name = name;
                                     test.createDate = new Date();
                                     test.updatedDate = new Date();
-                                    test.save().then(
-                                    function(data){
-                                        console.log(data);
-                                        return {
-                                            status: 200,
-                                            data: 'updated'
-                                        };
-                                    }, function(error){
-                                        console.log(error);
-                                        return {
-                                            status: 500,
-                                            data: 'there are has error in server'
-                                        };
-                                    });
+                                    return test.save().then(
+                                            function(data){
+                                                console.log(data);
+                                                return {
+                                                    status: 200,
+                                                    data: 'updated'
+                                                };
+                                            }, function(error){
+                                                return {
+                                                    status: 500,
+                                                    data: 'there are has error in server'
+                                                };
+                                            });
                                 }
                             }, function(error){
                                 return {
@@ -100,9 +96,9 @@
                             });
                     }, function(error){
                         return {
-                                    status: 500,
-                                    error: 'there are has error in server'
-                                };
+                            status: 500,
+                            error: 'there are has error in server'
+                        };
                     });
 
     };
