@@ -20,6 +20,11 @@
         });
     };
 
+    TestSchema.statics.findUserAnswers = function(name){
+        console.log(name);
+        return this.find({name: name});
+    };
+
     module.exports = mongoose.model('Test', TestSchema);
 
 })(module.exports);

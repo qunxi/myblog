@@ -42,5 +42,16 @@
                             });
         });
 
+        app.get('/api/elekta/answer', function(req, res){
+            var username = req.query.username;
+            console.log(username);
+            return elektaService.getAnswers(username)
+                            .then(function(data){
+                                return utilsSrv.httpResponse(res, data);
+                            }, function(error){
+                                return utilsSrv.httpResponse(res, error);
+                            });
+        });
+
     };
 })(module.exports);

@@ -18,7 +18,6 @@
     };
 
     elektaService.addTester = function(name){
-        console.log(name);
         return Tester.verifyTester(name)
                     .then(function(data){
                         if(data === null){
@@ -31,6 +30,23 @@
 
                             });
                         }
+                    });
+    };
+
+    elektaService.getAnswers = function(username){
+        return Test.findUserAnswers(username)
+                    .then(function(data){
+                        if(data !== null){
+                            return {
+                                status: 200,
+                                data: data
+                            };
+                        }
+                    }, function(error){
+                            return {
+                                status: 500,
+                                data: error
+                            };
                     });
     };
 
